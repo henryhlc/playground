@@ -10,7 +10,6 @@ project(playground VERSION 0.1
 set (CMAKE_CXX_STANDARD 23)
 
 include(FetchContent)
-set(SDL_STATIC TRUE BOOL "Build a SDL static library (if available)")
 FetchContent_Declare(
   SDL
   GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
@@ -18,7 +17,15 @@ FetchContent_Declare(
   GIT_SHALLOW TRUE
   GIT_PROGRESS TRUE
 )
-FetchContent_MakeAvailable(SDL)
+FetchContent_Declare(
+  Eigen
+  GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+  GIT_TAG master
+  GIT_SHALLOW TRUE
+  GIT_PROGRESS TRUE
+)
+
+FetchContent_MakeAvailable(SDL Eigen)
 
 add_executable(main src/main.cc)
-target_link_libraries(main PRIVATE SDL3::SDL3-static)
+target_link_libraries(main PRIVATE SDL3::SDL3-static Eigen3::Eigen)
