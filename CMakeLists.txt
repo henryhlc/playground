@@ -27,5 +27,4 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(SDL Eigen)
 
-add_executable(main src/main.cc)
-target_link_libraries(main PRIVATE SDL3::SDL3-static Eigen3::Eigen)
+add_subdirectory(src)
