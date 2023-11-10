@@ -10,6 +10,9 @@ build/
 *.o
 *.obj
 
+# These obj files are mesh data
+!data/*.obj
+
 # Precompiled Headers
 *.gch
 *.pch

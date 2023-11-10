@@ -24,7 +24,14 @@ FetchContent_Declare(
   GIT_SHALLOW TRUE
   GIT_PROGRESS TRUE
 )
-
-FetchContent_MakeAvailable(SDL Eigen)
+FetchContent_Declare(
+  libigl
+  GIT_REPOSITORY https://github.com/libigl/libigl.git
+  GIT_TAG main
+  GIT_SHALLOW TRUE
+  GIT_PROGRESS TRUE
+)
+FetchContent_MakeAvailable(SDL Eigen libigl)
 
 add_subdirectory(src)
+file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
