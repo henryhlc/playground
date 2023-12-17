@@ -1,13 +1,8 @@
-#include <iostream>
-#include <stdexcept>
-#include <vector>
-
-#include <Eigen/Eigen>
 #include <SDL3/SDL.h>
 
-#include "particle2d/particle2d.hh"
+#include "../particle2d/particle2d.hh"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char** argv) {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0) {
         SDL_Log("SDL_Init failed (%s)", SDL_GetError());
         return 1;
@@ -38,5 +33,5 @@ int main(int argc, char* argv[]) {
     SDL_DestroyWindow(window);
     SDL_Quit();
 
-    return 0;
+    return 0; 
 }

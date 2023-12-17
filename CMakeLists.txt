@@ -6,7 +6,7 @@ endif()
 
 project(playground VERSION 0.1
     DESCRIPTION "Playground to explore 3D system implementations."
-    LANGUAGES C CXX)
+    LANGUAGES CXX)
 set (CMAKE_CXX_STANDARD 23)
 
 include(FetchContent)
@@ -31,7 +31,17 @@ FetchContent_Declare(
   GIT_SHALLOW TRUE
   GIT_PROGRESS TRUE
 )
-FetchContent_MakeAvailable(SDL Eigen libigl)
+FetchContent_Declare(
+  polyscope
+  GIT_REPOSITORY https://github.com/nmwsharp/polyscope.git
+  GIT_TAG master
+  GIT_SHALLOW TRUE
+  GIT_PROGRESS TRUE
+)
+FetchContent_MakeAvailable(SDL Eigen libigl polyscope)
 
-add_subdirectory(src)
+add_subdirectory(src/mains)
+add_subdirectory(src/particle2d)
+add_subdirectory(src/affinebody)
+
 file(COPY data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

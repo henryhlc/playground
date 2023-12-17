@@ -3,4 +3,4 @@ add_library(particle2d
     model.hh model.cc
     view.hh view.cc
     scene.hh scene.cc)
-target_link_libraries(particle2d PRIVATE SDL3::SDL3-static Eigen3::Eigen)
+target_link_libraries(particle2d PRIVATE SDL3::SDL3 Eigen3::Eigen)
