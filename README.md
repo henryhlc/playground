@@ -2,4 +2,6 @@
 
 A space to experiment with graphics and physical programming.
 
-Used libraries: SDL3, Eigen3, libigl
+Code generation: sympy
+Linked libraries: SDL3, Eigen3, libigl, polyscope
+Data sources: alecjacobson/computer-graphics-meshes
