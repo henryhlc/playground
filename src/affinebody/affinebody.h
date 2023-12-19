@@ -8,17 +8,18 @@
 #include <Eigen/Eigen>
 
 struct AffineBody {
-    Eigen::Vector<double,12> q;
-
     const Eigen::Ref<const Eigen::MatrixX3d> world_V;
     const Eigen::Ref<const Eigen::MatrixX3i> F;
+
+    Eigen::Vector<double,12> q;
+    Eigen::Matrix<double,12,12> M;
 
     AffineBody(
         const Eigen::Ref<const Eigen::MatrixX3d> world_V,
         const Eigen::Ref<const Eigen::MatrixX3i> F,
         Eigen::Vector<double,12> q
-    ): world_V(world_V), F(F), q(q) {}
-    
+    );
+
     Eigen::Vector3d p() {
         return q(Eigen::seq(0,2));
     }

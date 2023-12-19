@@ -2,7 +2,7 @@
 
 #include "./massmatrix_integral.h"
 
-Eigen::Matrix<double, 12, 12> mass_matrix(
+Eigen::Matrix<double,12,12> mass_matrix(
         const Eigen::MatrixX3d& V,
         const Eigen::MatrixX3i& F) {
 
@@ -58,15 +58,106 @@ Eigen::Matrix<double, 12, 12> mass_matrix(
     return M;
 }
 
+AffineBody::AffineBody(
+    const Eigen::Ref<const Eigen::MatrixX3d> world_V,
+    const Eigen::Ref<const Eigen::MatrixX3i> F,
+    Eigen::Vector<double,12> q
+): world_V{world_V}, F{F}, q{q}, M{mass_matrix(world_V,F)} {}
+
 std::vector<AffineBody> affine_body_dynamics(
         const std::vector<AffineBody>& curr_states,
         const std::vector<AffineBody>& prev_states,
         std::chrono::milliseconds dt) {
-    std::vector<AffineBody> next_states {}; 
-    for (auto& af : curr_states) {
-        auto q_next = af.q;
-        q_next(Eigen::seq(0,2)) += Eigen::Vector3d {0.01, 0.01, 0.01};
-        next_states.emplace_back(af.world_V, af.F, q_next);
+
+    Eigen::VectorXd q_curr {12 * curr_states.size()};
+    Eigen::VectorXd q_prev {12 * prev_states.size()};
+    for (int i = 0; i < curr_states.size(); ++i) {
+        auto& ab = curr_states[i];
+        q_curr(Eigen::seqN(12 * i, 12)) = ab.q;
+        auto& ab_prev = prev_states[i];
+        q_prev(Eigen::seqN(12 * i, 12)) = ab_prev.q;
+
     }
+
+    Eigen::VectorXd q_iter = q_curr;
+
+    int num_newton_iter = 0;
+    int max_newton_iter = 1;
+    while (true) {
+        if (num_newton_iter >= max_newton_iter) {
+            std::cout << "Newton iterations has not converged after " << max_newton_iter << " iterations" << std::endl;
+            break;
+        }
+        num_newton_iter++;
+
+        // direction
+        double ie = 0.0;
+        Eigen::VectorXd grad = Eigen::VectorXd::Zero(12*curr_states.size());
+        Eigen::MatrixXd hess = Eigen::MatrixXd::Zero(12*curr_states.size(), 12*curr_states.size());
+
+        for (int i = 0; i < curr_states.size(); ++i) {
+            auto& ab = curr_states[i];
+            auto& ab_prev = prev_states[i];
+        
+            // Kinetic term
+
+            auto q_gap = q_iter(Eigen::seqN(i*12,12)) - (2*ab.q - ab_prev.q); // + dt^2 M^{-1}F
+            auto half_M_MT = 0.5 * ab.M + ab.M.transpose();
+
+            ie += 0.5 * q_gap.transpose() * ab.M * q_gap;
+            grad(Eigen::seqN(i*12, 12)) += half_M_MT * q_gap;
+            hess.block<12,12>(i*12, i*12) += half_M_MT;
+
+            // TODO: Orthogonal term
+        }
+
+        // TODO: contact
+        // all-pairs of body
+        // all-pairs vertex-face
+        // all-pairs edge-edge
+
+        // TODO: friction
+
+        Eigen::VectorXd search_direction = -hess.fullPivLu().solve(grad);
+
+        if (search_direction.lpNorm<Eigen::Infinity>() < 1e-4) {
+            break;
+        }
+
+        // Line search
+
+        // compute max with CCD
+        double max_step_size = 1;
+        double step_size = max_step_size;
+
+        int num_line_iter = 0;
+        int max_line_iter = 1;
+        while (true) {
+            if (num_line_iter >= max_line_iter) {
+                std::cout << "Line search target not found after " << max_line_iter << " iterations" << std::endl;
+                break;
+            }
+            num_line_iter++;
+
+            auto q_cand = q_iter + step_size * search_direction;
+
+            // TODO: compute energy of candidate
+            double ie_cand = 0.0;
+
+            if (ie_cand < ie) {
+                q_iter = q_cand;
+                break;
+            } else {
+                step_size /= 2;
+            }
+        }
+    } 
+
+    std::vector<AffineBody> next_states; 
+    for (int i = 0; i < curr_states.size(); ++i) {
+        auto& ab_curr = curr_states[i];
+        next_states.emplace_back(ab_curr.world_V, ab_curr.F, q_iter(Eigen::seqN(i*12, 12)));
+    }
+
     return next_states;
 }
