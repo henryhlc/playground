@@ -94,4 +94,16 @@ struct AffineBody {
     }
 };
 
+std::vector<AffineBody> affine_body_dynamics(
+        const std::vector<AffineBody>& curr_states,
+        std::chrono::milliseconds dt) {
+    std::vector<AffineBody> next_states {}; 
+    for (auto& af : curr_states) {
+        auto q_next = af.q;
+        q_next(Eigen::seq(0,2)) += Eigen::Vector3d {0.01, 0.01, 0.01};
+        next_states.emplace_back(af.world_V, af.F, q_next);
+    }
+    return next_states;
+}
+
 #endif  // PLYGRD_AFFINEBODY_H
