@@ -66,18 +66,21 @@ int main(int argc, char** argv) {
                 Eigen::Vector<double,12>{
                     0.5, 0.5, 0.5, 2, 0, 0, 0, 2, 0, 0, 0, 2
                 }},
+        },
+        {
             AffineBody {simplex_V, simplex_F,
                 Eigen::Vector<double,12>{
-                    0.0, 0.0, 0.0, 1, 0, 0, 0, 1, 0, 0, 0, 1
-                }}
+                    1.0, 1.0, 1.0, 2, 0, 0, 0, 2, 0, 0, 0, 2
+                }},
         }
     };
 
     auto frame_period = 30ms;
     int num_frames = 360;
     frame_states.resize(num_frames);
-    for (int f = 1; f < num_frames; ++f) {
-        frame_states[f] = affine_body_dynamics(frame_states[f-1], frame_period);
+    for (int f = 2; f < num_frames; ++f) {
+        frame_states[f] = affine_body_dynamics(
+            frame_states[f-1], frame_states[f-2], frame_period);
     }
 
     polyscope::init();
