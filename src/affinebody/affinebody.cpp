@@ -1,6 +1,7 @@
 #include "affinebody.h"
 
 #include "./massmatrix_integral.h"
+#include "./distance.h"
 
 Eigen::Matrix<double,12,12> mass_matrix(
         const Eigen::MatrixX3d& V,
@@ -123,9 +124,8 @@ std::vector<AffineBody> affine_body_dynamics(
     auto q_curr = stack_affine_body_coordinates(curr_states);
     auto q_prev = stack_affine_body_coordinates(prev_states);
 
-    double ie_curr = incremental_potential(q_curr, curr_states, prev_states, dt);
-
     Eigen::VectorXd q_iter = q_curr;
+    double ie_iter = incremental_potential(q_iter, curr_states, prev_states, dt);
 
     int num_newton_iter = 0;
     int max_newton_iter = 10;
@@ -189,8 +189,9 @@ std::vector<AffineBody> affine_body_dynamics(
 
             double ie_cand = incremental_potential(q_cand, curr_states, prev_states, dt);
 
-            if (ie_cand < ie_curr) {
+            if (ie_cand < ie_iter) {
                 q_iter = q_cand;
+                ie_iter = ie_cand;
                 break;
             } else {
                 step_size /= 2;

@@ -20,11 +20,11 @@ struct AffineBody {
         Eigen::Vector<double,12> q
     );
 
-    Eigen::Vector3d p() {
+    Eigen::Vector3d p() const {
         return q(Eigen::seq(0,2));
     }
 
-    Eigen::Matrix3d A() {
+    Eigen::Matrix3d A() const {
         Eigen::Matrix3d res;
         res.row(0) = q(Eigen::seq(3, 5));
         res.row(1) = q(Eigen::seq(6, 8));
@@ -32,7 +32,7 @@ struct AffineBody {
         return res;
     }
 
-    Eigen::MatrixX3d V() {
+    Eigen::MatrixX3d V() const {
         return (world_V * A().transpose()).rowwise() + p().transpose();
     }
 };

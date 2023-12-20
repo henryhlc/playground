@@ -64,19 +64,27 @@ int main(int argc, char** argv) {
         {
             AffineBody {simplex_V, simplex_F,
                 Eigen::Vector<double,12>{
-                    0.0, 10.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0
+                    2.0, 10.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0
+                }},
+            AffineBody {simplex_V, simplex_F,
+                Eigen::Vector<double,12>{
+                    -2.0, 10.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0
                 }},
         },
         {
             AffineBody {simplex_V, simplex_F,
                 Eigen::Vector<double,12>{
-                    0.0, 9.9, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0
+                    1.9, 9.9, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0
+                }},
+            AffineBody {simplex_V, simplex_F,
+                Eigen::Vector<double,12>{
+                    -1.9, 9.9, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0
                 }},
         }
     };
 
     auto frame_period = 30ms;
-    int num_frames = 30;
+    int num_frames = 90;
     frame_states.resize(num_frames);
     for (int f = 2; f < num_frames; ++f) {
         frame_states[f] = affine_body_dynamics(
