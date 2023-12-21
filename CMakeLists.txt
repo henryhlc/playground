@@ -9,6 +9,8 @@ project(playground VERSION 0.1
     LANGUAGES CXX)
 set (CMAKE_CXX_STANDARD 23)
 
+find_package(TBB)
+
 include(FetchContent)
 FetchContent_Declare(
   SDL
@@ -38,7 +40,17 @@ FetchContent_Declare(
   GIT_SHALLOW TRUE
   GIT_PROGRESS TRUE
 )
+FetchContent_Declare(
+  ipc_toolkit
+  GIT_REPOSITORY https://github.com/ipc-sim/ipc-toolkit.git
+  GIT_TAG main
+  GIT_SHALLOW TRUE
+  GIT_PROGRESS TRUE
+)
 FetchContent_MakeAvailable(SDL Eigen libigl polyscope)
+igl_include(predicates)
+FetchContent_MakeAvailable(ipc_toolkit)
+
 
 add_subdirectory(src/mains)
 add_subdirectory(src/particle2d)

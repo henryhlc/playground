@@ -14,5 +14,5 @@ add_library(affinebody
 	affinebody.h
 	affinebody.cpp)
 set_target_properties(affinebody PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(affinebody PUBLIC Eigen3::Eigen)
+target_link_libraries(affinebody PUBLIC Eigen3::Eigen ipc::toolkit)
 target_include_directories(affinebody PUBLIC "${CMAKE_CURRENT_BINARY_DIR}")
