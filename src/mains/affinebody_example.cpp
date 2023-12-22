@@ -14,6 +14,7 @@ using namespace std::literals;
 
 int main(int argc, char** argv) {
 
+    // CCW faces for correct normal direction.
     // Simplex
     Eigen::Matrix<double,4,3> simplex_V;
     simplex_V << 0.0, 0.0, 0.0,
@@ -60,36 +61,72 @@ int main(int argc, char** argv) {
              2, 4, 7,
              2, 7, 6;
          
-    std::vector<std::vector<AffineBody>> frame_states {
-        {
-            AffineBody {simplex_V, simplex_F,
-                Eigen::Vector<double,12>{
-                    2.0, 10.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0
-                }},
-            AffineBody {simplex_V, simplex_F,
-                Eigen::Vector<double,12>{
-                    -2.0, 10.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0
-                }},
-        },
-        {
-            AffineBody {simplex_V, simplex_F,
-                Eigen::Vector<double,12>{
-                    1.9, 9.9, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0
-                }},
-            AffineBody {simplex_V, simplex_F,
-                Eigen::Vector<double,12>{
-                    -1.9, 9.9, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 2.0
-                }},
-        }
+    std::vector<AffineBody> pp_states {
+        AffineBody {simplex_V, simplex_F,
+            Eigen::Vector<double,12>{
+                0.87, 1.98, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0
+            }},
+        AffineBody {simplex_V, simplex_F,
+            Eigen::Vector<double,12>{
+                -0.82, 2.01, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0
+            }},
+        AffineBody {simplex_V, simplex_F,
+            Eigen::Vector<double,12>{
+                0.02, 3.35, 0.03, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0
+            }},
+        AffineBody {simplex_V, simplex_F,
+            Eigen::Vector<double,12>{
+                0.02, 2.57, -0.82, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0
+            }},
+    };
+    std::vector<AffineBody> p_states {
+        AffineBody {simplex_V, simplex_F,
+            Eigen::Vector<double,12>{
+                0.8, 2.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0
+            }},
+        AffineBody {simplex_V, simplex_F,
+            Eigen::Vector<double,12>{
+                -0.8, 2.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0
+            }},
+        AffineBody {simplex_V, simplex_F,
+            Eigen::Vector<double,12>{
+                0.0, 3.32, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0
+            }},
+        AffineBody {simplex_V, simplex_F,
+            Eigen::Vector<double,12>{
+                0.02, 2.6, -0.77, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0
+            }},
     };
 
-    auto frame_period = 30ms;
-    int num_frames = 90;
-    frame_states.resize(num_frames);
-    for (int f = 2; f < num_frames; ++f) {
-        frame_states[f] = affine_body_dynamics(
-            frame_states[f-1], frame_states[f-2], frame_period);
+    auto simulation_start = std::chrono::steady_clock::now();
+    auto frame_period = 10ms;
+    size_t num_frames = 120;
+    int steps_per_frame = 1;
+    auto step_period = frame_period / steps_per_frame;
+    std::vector<std::vector<AffineBody>> frame_states {num_frames};
+    frame_states[0] = p_states;
+    for (int f = 1; f < num_frames; ++f) {
+        auto frame_start = std::chrono::steady_clock::now();
+        std::cout << "Frame " << f << std::endl;
+        for (int s = 0; s < steps_per_frame; ++s) {
+
+            auto step_start = std::chrono::steady_clock::now();
+            auto curr_states = affine_body_dynamics(p_states, pp_states, step_period);
+            pp_states = p_states;
+            p_states = curr_states;
+            auto step_end = std::chrono::steady_clock::now();
+            auto step_duration = std::chrono::round<std::chrono::milliseconds>(step_end - step_start);
+            std::cout << "Step " << s << ": " << step_duration << std::endl << std::endl;
+
+        }
+        frame_states[f] = p_states;
+        auto frame_end = std::chrono::steady_clock::now();
+        auto frame_duration = std::chrono::round<std::chrono::milliseconds>(frame_end - frame_start);
+        std::cout << "Frame " << f << ": " << frame_duration << std::endl << std::endl;
     }
+    auto simulation_end = std::chrono::steady_clock::now();
+    auto simulation_duration = std::chrono::round<std::chrono::milliseconds>(simulation_end - simulation_start);
+    std::cout << "Total simulation time: " << simulation_duration << std::endl;
 
     polyscope::init();
 

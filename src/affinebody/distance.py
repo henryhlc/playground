@@ -1,7 +1,7 @@
 from sympy import *
 
 # Keep in sync with the value in distance.h
-dh = 0.03
+dh = 0.001
 
 q1_1,q1_2,q1_3,q1_4,q1_5,q1_6,q1_7,q1_8,q1_9,q1_10,q1_11,q1_12 = symbols(
     'q1_1 q1_2 q1_3 q1_4 q1_5 q1_6 q1_7 q1_8 q1_9 q1_10 q1_11 q1_12')
@@ -36,7 +36,7 @@ P21 = p2 + A2 * Matrix([x21,y21,z21])
 P22 = p2 + A2 * Matrix([x22,y22,z22])
 
 d = symbols('d')
-barrier = -(dh-d)**2*log(d/dh)
+barrier = -(d-dh)**2*log(d/dh)
 
 def grad(v, q):
     return Matrix([v]).jacobian(q)
@@ -244,11 +244,11 @@ double barrier(double d) {{
 }}
 
 double d_barrier(double d) {{
-    return {db_expr}
+    return {db_expr};
 }}
 
 double dd_barrier(double d) {{
-    return {ddb_expr}
+    return {ddb_expr};
 }}
 """.format(
     b_expr=ccode(barrier),

@@ -8,6 +8,11 @@ add_custom_command(OUTPUT distance.cpp
 	DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/distance.py"
 )
 
+add_custom_command(OUTPUT orthogonal_ip.cpp
+	COMMAND python3 "${CMAKE_CURRENT_SOURCE_DIR}/orthogonal_ip.py" > orthogonal_ip.cpp
+	DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/orthogonal_ip.py"
+)
+
 add_library(affinebody_distance
 	distance.h
 	"${CMAKE_CURRENT_BINARY_DIR}/distance.cpp"
@@ -16,6 +21,7 @@ target_link_libraries(affinebody_distance PUBLIC Eigen3::Eigen ipc::toolkit)
 
 add_library(affinebody
 	massmatrix_integral.h "${CMAKE_CURRENT_BINARY_DIR}/massmatrix_integral.cpp"
+	orthogonal_ip.h "${CMAKE_CURRENT_BINARY_DIR}/orthogonal_ip.cpp"
 	affinebody.h affinebody.cpp
 	contact_ip.h contact_ip.cpp
 )
