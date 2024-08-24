@@ -1,13 +1,2 @@
 # Playground
-
-A space to experiment with graphics and physical programming.
-
-- Code generation: sympy
-- Linked libraries: SDL3, Eigen3, libigl, polyscope
-- Data sources: alecjacobson/computer-graphics-meshes
-
-References
-- (2022) Affine Body Dynamics: Fast, Stable & Intersection-free Simulation of Stiff Materials
-
-Known issues
-- dependencies that uses `Eigen::all` needs to be updated to `Eigen::indexing::all` or build will fail.
+Place to share my explorations with software. The repository is currently organized as `playground/<toolchain>/<project>/`.
