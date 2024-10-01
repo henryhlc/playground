@@ -1,15 +1,20 @@
 package oree
 
-type Trail struct {
-	Description string
+type OreeI interface {
+	Trails() TrailsI
 }
 
 type TrailId string
 
-type OreeI interface {
-	CreateTrail(Trail) TrailId
+type Trail struct {
+	Description string
 }
 
-type Oree struct {
-	OreeI
+type TrailsI interface {
+	CreateTrail(Trail) TrailId
+	TrailWithId(TrailId) TrailI
+}
+
+type TrailI interface {
+	Data() Trail
 }

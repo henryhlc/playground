@@ -1,28 +1,20 @@
 package oree_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/henryhlc/playground/go/oree"
 	"github.com/henryhlc/playground/go/oree/oreejson"
 )
 
-func TestOreeI(t *testing.T) {
+func TestTrailsI(t *testing.T) {
 	oreeI := oreejson.New()
-	id := oreeI.CreateTrail(oree.Trail{
-		Description: "abc",
+	expectedDescription := "abc"
+	id := oreeI.Trails().CreateTrail(oree.Trail{
+		Description: expectedDescription,
 	})
-	fmt.Println(id)
-}
-
-func TestOree(t *testing.T) {
-	o := oree.Oree{
-		OreeI: oreejson.New(),
+	actualDescription := oreeI.Trails().TrailWithId(id).Data().Description
+	if actualDescription != expectedDescription {
+		t.Errorf("Description expected: %v, actual: %v", expectedDescription, actualDescription)
 	}
-	id := o.CreateTrail(oree.Trail{
-		Description: "abc",
-	})
-	fmt.Println(id)
-
 }
