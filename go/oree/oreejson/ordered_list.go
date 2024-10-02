@@ -17,8 +17,8 @@ type ListItem[I comparable, E any] struct {
 	Elem *E
 }
 
-func NewOrderedListJson[I comparable, E any]() OrderedListJson[I, E] {
-	return OrderedListJson[I, E]{
+func NewOrderedListJson[I comparable, E any]() *OrderedListJson[I, E] {
+	return &OrderedListJson[I, E]{
 		ById: map[I]*E{},
 		Next: map[I]I{},
 		Prev: map[I]I{},

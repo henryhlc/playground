@@ -13,19 +13,13 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use: "oree",
-	Run: runFuncWithOree(root),
 }
 
 var jsonDataFileName string
 
 func init() {
 	rootCmd.PersistentFlags().StringVar(&jsonDataFileName, "json-data-file", "./oree.json", "path to JSON data file")
-}
-
-func root(o oree.OreeI) {
-	o.Trails().CreateTrail(oree.Trail{
-		Description: "testing trail",
-	})
+	rootCmd.AddCommand(trailsCmd)
 }
 
 func Execute() {

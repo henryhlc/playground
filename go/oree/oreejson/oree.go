@@ -11,15 +11,15 @@ type OreeJsonData struct {
 	TrailsData *TrailsJsonData `json:"trails"`
 }
 
+type OreeJson struct {
+	*OreeJsonData
+}
+
 func NewOreeJsonData() *OreeJsonData {
 	return &OreeJsonData{
 		NextId:     0,
 		TrailsData: NewTrailsJsonData(),
 	}
-}
-
-type OreeJson struct {
-	*OreeJsonData
 }
 
 func New() OreeJson {
