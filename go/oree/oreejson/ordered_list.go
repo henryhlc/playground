@@ -1,201 +1,119 @@
 package oreejson
 
-import (
-	"slices"
-)
-
-type OrderedListJson[I comparable, E any] struct {
-	ById map[I]*E `json:"byId"`
-	Next map[I]I  `json:"next"`
-	Prev map[I]I  `json:"prev"`
-	Head I        `json:"head"`
-	Tail I        `json:"tail"`
+type ItemHandleConverter[I comparable, E any, D any, H any] interface {
+	emptyHandle() H
+	newItem(D) ListItem[I, E]
+	updatedItem(ListItem[I, E], D) ListItem[I, E]
+	itemToHandle(ListItem[I, E]) H
+	handleToItem(H) ListItem[I, E]
 }
 
-type ListItem[I comparable, E any] struct {
-	Id   I
-	Elem *E
+type OrderedListJson[I comparable, E any, D any, H any] struct {
+	*OrderedListJsonData[I, E]
+	Converter ItemHandleConverter[I, E, D, H]
 }
 
-func NewOrderedListJson[I comparable, E any]() *OrderedListJson[I, E] {
-	return &OrderedListJson[I, E]{
-		ById: map[I]*E{},
-		Next: map[I]I{},
-		Prev: map[I]I{},
+func OrderedListJsonFromData[I comparable, E any, D any, H any](
+	d *OrderedListJsonData[I, E],
+	converter ItemHandleConverter[I, E, D, H]) OrderedListJson[I, E, D, H] {
+	return OrderedListJson[I, E, D, H]{
+		OrderedListJsonData: d,
+		Converter:           converter,
 	}
 }
 
-func (ol OrderedListJson[I, E]) Len() int {
-	return len(ol.ById)
+func (ol OrderedListJson[I, E, D, H]) itemsToHandles(items []ListItem[I, E]) []H {
+	handles := make([]H, len(items))
+	for i, item := range items {
+		handles[i] = ol.Converter.itemToHandle(item)
+	}
+	return handles
 }
 
-func (ol *OrderedListJson[I, E]) PlaceItemBack(item ListItem[I, E]) {
-	if item, ok := ol.ItemWithId(item.Id); ok {
-		ol.DeleteItem(item)
-	}
-	if ol.Len() == 0 {
-		ol.Head = item.Id
-		ol.Tail = item.Id
-	} else {
-		ol.Next[ol.Tail] = item.Id
-		ol.Prev[item.Id] = ol.Tail
-		ol.Tail = item.Id
-	}
-	ol.ById[item.Id] = item.Elem
+func (ol OrderedListJson[I, E, D, H]) Len() int {
+	return ol.OrderedListJsonData.Len()
 }
 
-func (ol *OrderedListJson[I, E]) PlaceItemFront(item ListItem[I, E]) {
-	if item, ok := ol.ItemWithId(item.Id); ok {
-		ol.DeleteItem(item)
-	}
-	if ol.Len() == 0 {
-		ol.PlaceItemBack(item)
-		return
-	}
-	ol.Prev[ol.Head] = item.Id
-	ol.Next[item.Id] = ol.Head
-	ol.Head = item.Id
-	ol.ById[item.Id] = item.Elem
+func (ol OrderedListJson[I, E, D, H]) CreateFront(d D) H {
+	item := ol.Converter.newItem(d)
+	ol.PlaceItemFront(item)
+	return ol.Converter.itemToHandle(item)
 }
 
-// Requires nbr to be an item in the list.
-func (ol *OrderedListJson[I, E]) PlaceItemBefore(item, nbr ListItem[I, E]) {
-	if item, ok := ol.ItemWithId(item.Id); ok {
-		ol.DeleteItem(item)
-	}
-	if ol.Len() == 0 || nbr.Id == ol.Head {
-		ol.PlaceItemFront(item)
-		return
-	}
-	ol.ById[item.Id] = item.Elem
-	nbrPrevId := ol.Prev[nbr.Id]
-	ol.Next[nbrPrevId] = item.Id
-	ol.Prev[nbr.Id] = item.Id
-	ol.Next[item.Id] = nbr.Id
-	ol.Prev[item.Id] = nbrPrevId
+func (ol OrderedListJson[I, E, D, H]) CreateBack(d D) H {
+	item := ol.Converter.newItem(d)
+	ol.PlaceItemBack(item)
+	return ol.Converter.itemToHandle(item)
 }
 
-// Requires nbr to be an item in the list.
-func (ol *OrderedListJson[I, E]) PlaceItemAfter(item, nbr ListItem[I, E]) {
-	if item, ok := ol.ItemWithId(item.Id); ok {
-		ol.DeleteItem(item)
-	}
-	if ol.Len() == 0 || nbr.Id == ol.Tail {
-		ol.PlaceItemBack(item)
-		return
-	}
-	ol.ById[item.Id] = item.Elem
-	nbrNextId := ol.Next[nbr.Id]
-	ol.Next[nbr.Id] = item.Id
-	ol.Prev[nbrNextId] = item.Id
-	ol.Next[item.Id] = nbrNextId
-	ol.Prev[item.Id] = nbr.Id
+func (ol OrderedListJson[I, E, D, H]) CreateBefore(d D, nbr H) H {
+	item := ol.Converter.newItem(d)
+	nbrItem := ol.Converter.handleToItem(nbr)
+	ol.PlaceItemBefore(item, nbrItem)
+	return ol.Converter.itemToHandle(item)
 }
 
-func (ol *OrderedListJson[I, E]) ItemWithId(id I) (item ListItem[I, E], ok bool) {
-	e, ok := ol.ById[id]
+func (ol OrderedListJson[I, E, D, H]) CreateAfter(d D, nbr H) H {
+	item := ol.Converter.newItem(d)
+	nbrItem := ol.Converter.handleToItem(nbr)
+	ol.PlaceItemAfter(item, nbrItem)
+	return ol.Converter.itemToHandle(item)
+}
+
+func (ol OrderedListJson[I, E, D, H]) WithId(id I) (H, bool) {
+	item, ok := ol.ItemWithId(id)
 	if !ok {
-		return ListItem[I, E]{}, false
+		return ol.Converter.emptyHandle(), false
 	}
-	return ListItem[I, E]{
-		Id:   id,
-		Elem: e,
-	}, true
+	return ol.Converter.itemToHandle(item), true
 }
 
-func (ol *OrderedListJson[I, E]) FirstNItems(n int) []ListItem[I, E] {
-	if ol.Len() == 0 {
-		return nil
-	}
-	headItem, _ := ol.ItemWithId(ol.Head)
-	items := []ListItem[I, E]{headItem}
-	if ol.Len() == 1 || n == 1 {
-		return items
-	}
-	return append(items, ol.NItemsAfter(n-1, headItem)...)
+func (ol OrderedListJson[I, E, D, H]) FirstN(n int) []H {
+	return ol.itemsToHandles(ol.FirstNItems(n))
 }
 
-func (ol *OrderedListJson[I, E]) NItemsAfter(n int, item ListItem[I, E]) []ListItem[I, E] {
-	currId, ok := ol.Next[item.Id]
-	if !ok {
-		return nil
-	}
-	items := []ListItem[I, E]{}
-	for range n {
-		currItem, _ := ol.ItemWithId(currId)
-		items = append(items, currItem)
-		if nextId, ok := ol.Next[currId]; ok {
-			currId = nextId
-		} else {
-			break
-		}
-	}
-	return items
+func (ol OrderedListJson[I, E, D, H]) LastN(n int) []H {
+	return ol.itemsToHandles(ol.LastNItems(n))
 }
 
-func (ol *OrderedListJson[I, E]) LastNItems(n int) []ListItem[I, E] {
-	if ol.Len() == 0 {
-		return nil
-	}
-	tailItem, _ := ol.ItemWithId(ol.Tail)
-	if ol.Len() == 1 || n == 1 {
-		return []ListItem[I, E]{tailItem}
-	}
-	return append(ol.NItemsBefore(n-1, tailItem), tailItem)
-
+func (ol OrderedListJson[I, E, D, H]) NAfter(n int, h H) []H {
+	item := ol.Converter.handleToItem(h)
+	return ol.itemsToHandles(ol.NItemsAfter(n, item))
 }
 
-func (ol *OrderedListJson[I, E]) NItemsBefore(n int, item ListItem[I, E]) []ListItem[I, E] {
-	currId, ok := ol.Prev[item.Id]
-	if !ok {
-		return nil
-	}
-	items := []ListItem[I, E]{}
-	for range n {
-		currItem, _ := ol.ItemWithId(currId)
-		items = append(items, currItem)
-		if prevId, ok := ol.Prev[currId]; ok {
-			currId = prevId
-		} else {
-			break
-		}
-	}
-	slices.Reverse(items)
-	return items
+func (ol OrderedListJson[I, E, D, H]) NBefore(n int, h H) []H {
+	item := ol.Converter.handleToItem(h)
+	return ol.itemsToHandles(ol.NItemsBefore(n, item))
 }
 
-func (ol *OrderedListJson[I, E]) UpdateItem(item ListItem[I, E]) {
-	ol.ById[item.Id] = item.Elem
+func (ol OrderedListJson[I, E, D, H]) PlaceFront(h H) {
+	item := ol.Converter.handleToItem(h)
+	ol.PlaceItemFront(item)
 }
 
-func (ol *OrderedListJson[I, E]) DeleteItem(item ListItem[I, E]) {
-	if ol.Len() == 0 {
-		return
-	}
-	item, ok := ol.ItemWithId(item.Id)
-	if !ok {
-		return
-	}
+func (ol OrderedListJson[I, E, D, H]) PlaceBack(h H) {
+	item := ol.Converter.handleToItem(h)
+	ol.PlaceItemBack(item)
+}
 
-	switch {
-	case item.Id == ol.Head && item.Id == ol.Tail:
-		break
-	case item.Id == ol.Head:
-		nextId := ol.Next[item.Id]
-		ol.Head = nextId
-		delete(ol.Prev, nextId)
-		delete(ol.Next, item.Id)
-	case item.Id == ol.Tail:
-		prevId := ol.Prev[item.Id]
-		ol.Tail = prevId
-		delete(ol.Prev, item.Id)
-		delete(ol.Next, prevId)
-	default:
-		prevId, nextId := ol.Prev[item.Id], ol.Next[item.Id]
-		ol.Next[prevId] = nextId
-		ol.Prev[nextId] = prevId
-		delete(ol.Prev, item.Id)
-		delete(ol.Next, item.Id)
-	}
-	delete(ol.ById, item.Id)
+func (ol OrderedListJson[I, E, D, H]) PlaceBefore(h H, nbr H) {
+	item := ol.Converter.handleToItem(h)
+	nbrItem := ol.Converter.handleToItem(nbr)
+	ol.PlaceItemBefore(item, nbrItem)
+}
+
+func (ol OrderedListJson[I, E, D, H]) PlaceAfter(h H, nbr H) {
+	item := ol.Converter.handleToItem(h)
+	nbrItem := ol.Converter.handleToItem(nbr)
+	ol.PlaceItemAfter(item, nbrItem)
+}
+
+func (ol OrderedListJson[I, E, D, H]) Update(h H, d D) {
+	item := ol.Converter.updatedItem(ol.Converter.handleToItem(h), d)
+	ol.UpdateItem(item)
+}
+
+func (ol OrderedListJson[I, E, D, H]) Delete(h H) {
+	item := ol.Converter.handleToItem(h)
+	ol.DeleteItem(item)
 }

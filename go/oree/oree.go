@@ -1,13 +1,39 @@
 package oree
 
+type TrailId string
+type Trail struct {
+	Description string
+}
+
+type StepId string
+type StepStatus int
+
+type Step struct {
+	Description string
+}
+
 type OreeI interface {
 	Trails() TrailsI
 }
 
-type TrailId string
+type TrailsI interface {
+	OrderedListI[Trail, TrailI, TrailId]
+}
 
-type Trail struct {
-	Description string
+type TrailI interface {
+	Id() TrailId
+	Data() Trail
+	Update(Trail)
+}
+
+type StepsI interface {
+	OrderedListI[Step, StepI, StepId]
+}
+
+type StepI interface {
+	Id() StepId
+	Data() Step
+	Update(Step)
 }
 
 type OrderedListI[D any, H any, I comparable] interface {
@@ -32,17 +58,4 @@ type OrderedListI[D any, H any, I comparable] interface {
 	Update(H, D)
 
 	Delete(H)
-}
-
-// For methods that accepts TrailI, one should only pass
-// TrailI's that are obtrained from the same instance
-// of TrailsI.
-type TrailsI interface {
-	OrderedListI[Trail, TrailI, TrailId]
-}
-
-type TrailI interface {
-	Id() TrailId
-	Data() Trail
-	Update(Trail)
 }

@@ -22,13 +22,7 @@ func NewOreeJsonData() *OreeJsonData {
 	}
 }
 
-func New() OreeJson {
-	return OreeJson{
-		OreeJsonData: NewOreeJsonData(),
-	}
-}
-
-func NewFromOreeJsonData(d *OreeJsonData) OreeJson {
+func FromData(d *OreeJsonData) OreeJson {
 	return OreeJson{
 		OreeJsonData: d,
 	}
@@ -41,8 +35,5 @@ func (o OreeJson) getAndIncId() string {
 }
 
 func (o OreeJson) Trails() oree.TrailsI {
-	return TrailsJson{
-		TrailsJsonData: o.TrailsData,
-		oreeJson:       o,
-	}
+	return TrailsFromData(o.TrailsData, o)
 }
