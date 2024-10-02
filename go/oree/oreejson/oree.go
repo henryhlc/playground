@@ -6,25 +6,25 @@ import (
 	"github.com/henryhlc/playground/go/oree"
 )
 
-type OreeJsonData struct {
-	NextId     int             `json:"nextId"`
-	TrailsData *TrailsJsonData `json:"trails"`
+type OreeJD struct {
+	NextId     int       `json:"nextId"`
+	TrailsData *TrailsJD `json:"trails"`
 }
 
 type OreeJson struct {
-	*OreeJsonData
+	*OreeJD
 }
 
-func NewOreeJsonData() *OreeJsonData {
-	return &OreeJsonData{
+func NewOreeJD() *OreeJD {
+	return &OreeJD{
 		NextId:     0,
-		TrailsData: NewTrailsJsonData(),
+		TrailsData: NewTrailsJD(),
 	}
 }
 
-func FromData(d *OreeJsonData) OreeJson {
+func FromData(d *OreeJD) OreeJson {
 	return OreeJson{
-		OreeJsonData: d,
+		OreeJD: d,
 	}
 }
 

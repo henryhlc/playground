@@ -59,7 +59,7 @@ func matchTestItems(actual, expected []oreejson.ListItem[string, string], t *tes
 
 func TestLen(t *testing.T) {
 	items := createTestItems(2)
-	ol := oreejson.NewOrderedListJsonData[string, string]()
+	ol := oreejson.NewOrderedListJD[string, string]()
 	if actual := ol.Len(); actual != 0 {
 		t.Errorf("Len() expected 0 actual %v", actual)
 	}
@@ -74,7 +74,7 @@ func TestLen(t *testing.T) {
 }
 
 func TestPlaceItemBack(t *testing.T) {
-	ol := oreejson.NewOrderedListJsonData[string, string]()
+	ol := oreejson.NewOrderedListJD[string, string]()
 	items := createTestItems(2)
 	ol.PlaceItemBack(items[0])
 	if !matchTestItems(ol.LastNItems(3), items[:1], t) {
@@ -94,7 +94,7 @@ func TestPlaceItemBack(t *testing.T) {
 }
 
 func TestPlaceItemFront(t *testing.T) {
-	ol := oreejson.NewOrderedListJsonData[string, string]()
+	ol := oreejson.NewOrderedListJD[string, string]()
 	items := createTestItems(2)
 	ol.PlaceItemFront(items[1])
 	if !matchTestItems(ol.FirstNItems(3), items[1:], t) {
@@ -114,7 +114,7 @@ func TestPlaceItemFront(t *testing.T) {
 }
 
 func TestPlaceItemBefore(t *testing.T) {
-	ol := oreejson.NewOrderedListJsonData[string, string]()
+	ol := oreejson.NewOrderedListJD[string, string]()
 	items := createTestItems(3)
 	ol.PlaceItemFront(items[2])
 	if !matchTestItems(ol.LastNItems(3), items[2:], t) {
@@ -134,7 +134,7 @@ func TestPlaceItemBefore(t *testing.T) {
 }
 
 func TestPlaceItemAfter(t *testing.T) {
-	ol := oreejson.NewOrderedListJsonData[string, string]()
+	ol := oreejson.NewOrderedListJD[string, string]()
 	items := createTestItems(3)
 	ol.PlaceItemBack(items[0])
 	if !matchTestItems(ol.FirstNItems(3), items[:1], t) {
@@ -154,7 +154,7 @@ func TestPlaceItemAfter(t *testing.T) {
 }
 
 func TestItemWithId(t *testing.T) {
-	ol := oreejson.NewOrderedListJsonData[string, string]()
+	ol := oreejson.NewOrderedListJD[string, string]()
 	items := createTestItems(2)
 	ol.PlaceItemBack(items[0])
 	item, ok := ol.ItemWithId(items[0].Id)
@@ -170,7 +170,7 @@ func TestItemWithId(t *testing.T) {
 }
 
 func TestNItems(t *testing.T) {
-	ol := oreejson.NewOrderedListJsonData[string, string]()
+	ol := oreejson.NewOrderedListJD[string, string]()
 	items := createTestItems(5)
 	ol.PlaceItemBack(items[0])
 	ol.PlaceItemBack(items[1])
@@ -197,7 +197,7 @@ func TestNItems(t *testing.T) {
 }
 
 func TestUpdateItem(t *testing.T) {
-	ol := oreejson.NewOrderedListJsonData[string, string]()
+	ol := oreejson.NewOrderedListJD[string, string]()
 	items := createTestItems(2)
 	ol.PlaceItemBack(items[0])
 
@@ -213,7 +213,7 @@ func TestUpdateItem(t *testing.T) {
 }
 
 func TestDeleteItem(t *testing.T) {
-	ol := oreejson.NewOrderedListJsonData[string, string]()
+	ol := oreejson.NewOrderedListJD[string, string]()
 	items := createTestItems(3)
 
 	ol.DeleteItem(items[0]) // should be no-op

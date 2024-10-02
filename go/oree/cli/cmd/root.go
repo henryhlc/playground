@@ -39,15 +39,15 @@ func runFuncWithOree(f func(oree.OreeI)) func(*cobra.Command, []string) {
 
 		var oj oreejson.OreeJson
 
-		var data oreejson.OreeJsonData
+		var data oreejson.OreeJD
 		if err := json.Unmarshal(bytes, &data); err != nil {
-			oj = oreejson.FromData(oreejson.NewOreeJsonData())
+			oj = oreejson.FromData(oreejson.NewOreeJD())
 		} else {
 			oj = oreejson.FromData(&data)
 		}
 
 		f(oj)
-		bytes, err = json.Marshal(oj.OreeJsonData)
+		bytes, err = json.Marshal(oj.OreeJD)
 		maybePrintAndExit(err)
 
 		file.Truncate(0)

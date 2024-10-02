@@ -4,25 +4,25 @@ import (
 	"github.com/henryhlc/playground/go/oree"
 )
 
-type TrailsJsonData struct {
-	*OrderedListJsonData[oree.TrailId, TrailJsonData]
+type TrailsJD struct {
+	*OrderedListJD[oree.TrailId, TrailJD]
 }
 
-func NewTrailsJsonData() *TrailsJsonData {
-	return &TrailsJsonData{
-		OrderedListJsonData: NewOrderedListJsonData[oree.TrailId, TrailJsonData](),
+func NewTrailsJD() *TrailsJD {
+	return &TrailsJD{
+		OrderedListJD: NewOrderedListJD[oree.TrailId, TrailJD](),
 	}
 }
 
-type TrailsJson struct {
-	OrderedListJson[oree.TrailId, TrailJsonData, oree.Trail, oree.TrailI]
+type TrailsOJ struct {
+	OrderedListOJ[oree.TrailId, TrailJD, oree.Trail, oree.TrailI]
 	oreeJson OreeJson
 }
 
-func TrailsFromData(data *TrailsJsonData, oreeJson OreeJson) TrailsJson {
-	return TrailsJson{
-		OrderedListJson: OrderedListJsonFromData(
-			data.OrderedListJsonData,
+func TrailsFromData(data *TrailsJD, oreeJson OreeJson) TrailsOJ {
+	return TrailsOJ{
+		OrderedListOJ: OrderedListFromData(
+			data.OrderedListJD,
 			newItemTrailIConverter(oreeJson),
 		),
 		oreeJson: oreeJson,
@@ -38,39 +38,39 @@ func newItemTrailIConverter(oreeJson OreeJson) ItemTrailIConverter {
 }
 
 func (c ItemTrailIConverter) emptyHandle() oree.TrailI {
-	return TrailJson{}
+	return TrailOJ{}
 }
 
-func (c ItemTrailIConverter) newItem(d oree.Trail) ListItem[oree.TrailId, TrailJsonData] {
+func (c ItemTrailIConverter) newItem(d oree.Trail) ListItem[oree.TrailId, TrailJD] {
 	id := oree.TrailId(c.oreeJson.getAndIncId())
-	return ListItem[oree.TrailId, TrailJsonData]{
+	return ListItem[oree.TrailId, TrailJD]{
 		Id:   id,
-		Elem: NewTrailJsonData(d),
+		Elem: NewTrailJD(d),
 	}
 }
 
 func (c ItemTrailIConverter) updatedItem(
-	item ListItem[oree.TrailId, TrailJsonData],
-	d oree.Trail) ListItem[oree.TrailId, TrailJsonData] {
-	return ListItem[oree.TrailId, TrailJsonData]{
+	item ListItem[oree.TrailId, TrailJD],
+	d oree.Trail) ListItem[oree.TrailId, TrailJD] {
+	return ListItem[oree.TrailId, TrailJD]{
 		Id:   item.Id,
-		Elem: NewTrailJsonData(d),
+		Elem: NewTrailJD(d),
 	}
 }
 
 func (c ItemTrailIConverter) itemToHandle(
-	item ListItem[oree.TrailId, TrailJsonData]) oree.TrailI {
-	return TrailJson{
-		TrailJsonData: item.Elem,
-		oreeJson:      c.oreeJson,
-		id:            item.Id,
+	item ListItem[oree.TrailId, TrailJD]) oree.TrailI {
+	return TrailOJ{
+		TrailJD:  item.Elem,
+		oreeJson: c.oreeJson,
+		id:       item.Id,
 	}
 }
 
-func (c ItemTrailIConverter) handleToItem(h oree.TrailI) ListItem[oree.TrailId, TrailJsonData] {
-	tj := h.(TrailJson)
-	return ListItem[oree.TrailId, TrailJsonData]{
+func (c ItemTrailIConverter) handleToItem(h oree.TrailI) ListItem[oree.TrailId, TrailJD] {
+	tj := h.(TrailOJ)
+	return ListItem[oree.TrailId, TrailJD]{
 		Id:   tj.id,
-		Elem: tj.TrailJsonData,
+		Elem: tj.TrailJD,
 	}
 }

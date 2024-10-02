@@ -4,7 +4,7 @@ import (
 	"slices"
 )
 
-type OrderedListJsonData[I comparable, E any] struct {
+type OrderedListJD[I comparable, E any] struct {
 	ById map[I]*E `json:"byId"`
 	Next map[I]I  `json:"next"`
 	Prev map[I]I  `json:"prev"`
@@ -17,19 +17,19 @@ type ListItem[I comparable, E any] struct {
 	Elem *E
 }
 
-func NewOrderedListJsonData[I comparable, E any]() *OrderedListJsonData[I, E] {
-	return &OrderedListJsonData[I, E]{
+func NewOrderedListJD[I comparable, E any]() *OrderedListJD[I, E] {
+	return &OrderedListJD[I, E]{
 		ById: map[I]*E{},
 		Next: map[I]I{},
 		Prev: map[I]I{},
 	}
 }
 
-func (ol OrderedListJsonData[I, E]) Len() int {
+func (ol OrderedListJD[I, E]) Len() int {
 	return len(ol.ById)
 }
 
-func (ol *OrderedListJsonData[I, E]) PlaceItemBack(item ListItem[I, E]) {
+func (ol *OrderedListJD[I, E]) PlaceItemBack(item ListItem[I, E]) {
 	if item, ok := ol.ItemWithId(item.Id); ok {
 		ol.DeleteItem(item)
 	}
@@ -44,7 +44,7 @@ func (ol *OrderedListJsonData[I, E]) PlaceItemBack(item ListItem[I, E]) {
 	ol.ById[item.Id] = item.Elem
 }
 
-func (ol *OrderedListJsonData[I, E]) PlaceItemFront(item ListItem[I, E]) {
+func (ol *OrderedListJD[I, E]) PlaceItemFront(item ListItem[I, E]) {
 	if item, ok := ol.ItemWithId(item.Id); ok {
 		ol.DeleteItem(item)
 	}
@@ -59,7 +59,7 @@ func (ol *OrderedListJsonData[I, E]) PlaceItemFront(item ListItem[I, E]) {
 }
 
 // Requires nbr to be an item in the list.
-func (ol *OrderedListJsonData[I, E]) PlaceItemBefore(item, nbr ListItem[I, E]) {
+func (ol *OrderedListJD[I, E]) PlaceItemBefore(item, nbr ListItem[I, E]) {
 	if item, ok := ol.ItemWithId(item.Id); ok {
 		ol.DeleteItem(item)
 	}
@@ -76,7 +76,7 @@ func (ol *OrderedListJsonData[I, E]) PlaceItemBefore(item, nbr ListItem[I, E]) {
 }
 
 // Requires nbr to be an item in the list.
-func (ol *OrderedListJsonData[I, E]) PlaceItemAfter(item, nbr ListItem[I, E]) {
+func (ol *OrderedListJD[I, E]) PlaceItemAfter(item, nbr ListItem[I, E]) {
 	if item, ok := ol.ItemWithId(item.Id); ok {
 		ol.DeleteItem(item)
 	}
@@ -92,7 +92,7 @@ func (ol *OrderedListJsonData[I, E]) PlaceItemAfter(item, nbr ListItem[I, E]) {
 	ol.Prev[item.Id] = nbr.Id
 }
 
-func (ol *OrderedListJsonData[I, E]) ItemWithId(id I) (item ListItem[I, E], ok bool) {
+func (ol *OrderedListJD[I, E]) ItemWithId(id I) (item ListItem[I, E], ok bool) {
 	e, ok := ol.ById[id]
 	if !ok {
 		return ListItem[I, E]{}, false
@@ -103,7 +103,7 @@ func (ol *OrderedListJsonData[I, E]) ItemWithId(id I) (item ListItem[I, E], ok b
 	}, true
 }
 
-func (ol *OrderedListJsonData[I, E]) FirstNItems(n int) []ListItem[I, E] {
+func (ol *OrderedListJD[I, E]) FirstNItems(n int) []ListItem[I, E] {
 	if ol.Len() == 0 {
 		return nil
 	}
@@ -115,7 +115,7 @@ func (ol *OrderedListJsonData[I, E]) FirstNItems(n int) []ListItem[I, E] {
 	return append(items, ol.NItemsAfter(n-1, headItem)...)
 }
 
-func (ol *OrderedListJsonData[I, E]) NItemsAfter(n int, item ListItem[I, E]) []ListItem[I, E] {
+func (ol *OrderedListJD[I, E]) NItemsAfter(n int, item ListItem[I, E]) []ListItem[I, E] {
 	currId, ok := ol.Next[item.Id]
 	if !ok {
 		return nil
@@ -133,7 +133,7 @@ func (ol *OrderedListJsonData[I, E]) NItemsAfter(n int, item ListItem[I, E]) []L
 	return items
 }
 
-func (ol *OrderedListJsonData[I, E]) LastNItems(n int) []ListItem[I, E] {
+func (ol *OrderedListJD[I, E]) LastNItems(n int) []ListItem[I, E] {
 	if ol.Len() == 0 {
 		return nil
 	}
@@ -145,7 +145,7 @@ func (ol *OrderedListJsonData[I, E]) LastNItems(n int) []ListItem[I, E] {
 
 }
 
-func (ol *OrderedListJsonData[I, E]) NItemsBefore(n int, item ListItem[I, E]) []ListItem[I, E] {
+func (ol *OrderedListJD[I, E]) NItemsBefore(n int, item ListItem[I, E]) []ListItem[I, E] {
 	currId, ok := ol.Prev[item.Id]
 	if !ok {
 		return nil
@@ -164,11 +164,11 @@ func (ol *OrderedListJsonData[I, E]) NItemsBefore(n int, item ListItem[I, E]) []
 	return items
 }
 
-func (ol *OrderedListJsonData[I, E]) UpdateItem(item ListItem[I, E]) {
+func (ol *OrderedListJD[I, E]) UpdateItem(item ListItem[I, E]) {
 	ol.ById[item.Id] = item.Elem
 }
 
-func (ol *OrderedListJsonData[I, E]) DeleteItem(item ListItem[I, E]) {
+func (ol *OrderedListJD[I, E]) DeleteItem(item ListItem[I, E]) {
 	if ol.Len() == 0 {
 		return
 	}
