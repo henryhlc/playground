@@ -108,11 +108,6 @@ func (ol OrderedListOJ[I, E, D, H]) PlaceAfter(h H, nbr H) {
 	ol.PlaceItemAfter(item, nbrItem)
 }
 
-func (ol OrderedListOJ[I, E, D, H]) Update(h H, d D) {
-	item := ol.Converter.updatedItem(ol.Converter.handleToItem(h), d)
-	ol.UpdateItem(item)
-}
-
 func (ol OrderedListOJ[I, E, D, H]) Delete(h H) {
 	item := ol.Converter.handleToItem(h)
 	ol.DeleteItem(item)

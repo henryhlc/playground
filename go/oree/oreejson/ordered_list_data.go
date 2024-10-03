@@ -164,10 +164,6 @@ func (ol *OrderedListJD[I, E]) NItemsBefore(n int, item ListItem[I, E]) []ListIt
 	return items
 }
 
-func (ol *OrderedListJD[I, E]) UpdateItem(item ListItem[I, E]) {
-	ol.ById[item.Id] = item.Elem
-}
-
 func (ol *OrderedListJD[I, E]) DeleteItem(item ListItem[I, E]) {
 	if ol.Len() == 0 {
 		return

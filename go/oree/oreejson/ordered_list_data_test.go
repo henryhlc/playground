@@ -196,22 +196,6 @@ func TestNItems(t *testing.T) {
 	}
 }
 
-func TestUpdateItem(t *testing.T) {
-	ol := oreejson.NewOrderedListJD[string, string]()
-	items := createTestItems(2)
-	ol.PlaceItemBack(items[0])
-
-	newItem := oreejson.ListItem[string, string]{
-		Id:   items[0].Id,
-		Elem: items[1].Elem,
-	}
-	ol.UpdateItem(newItem)
-	actual, _ := ol.ItemWithId(items[0].Id)
-	if !matchTestItem(actual, newItem, t) {
-		t.Errorf("^ after UpdateItem.")
-	}
-}
-
 func TestDeleteItem(t *testing.T) {
 	ol := oreejson.NewOrderedListJD[string, string]()
 	items := createTestItems(3)

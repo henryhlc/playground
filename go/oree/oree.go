@@ -55,7 +55,5 @@ type OrderedListI[D any, H any, I comparable] interface {
 	PlaceBefore(H, H)
 	PlaceAfter(H, H)
 
-	Update(H, D)
-
 	Delete(H)
 }

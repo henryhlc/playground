@@ -93,7 +93,7 @@ func updateTrail(o oree.OreeI) {
 	if !ok {
 		return
 	}
-	o.Trails().Update(t, oree.Trail{
+	t.Update(oree.Trail{
 		Description: trailUpdateDescription,
 	})
 }
