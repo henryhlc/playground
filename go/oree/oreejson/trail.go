@@ -3,7 +3,8 @@ package oreejson
 import "github.com/henryhlc/playground/go/oree"
 
 type TrailJD struct {
-	Description string `json:"description"`
+	Description string   `json:"description"`
+	ActiveSteps *StepsJD `json:"activeSteps"`
 }
 
 type TrailOJ struct {
@@ -15,6 +16,7 @@ type TrailOJ struct {
 func NewTrailJD(trail oree.Trail) *TrailJD {
 	return &TrailJD{
 		Description: trail.Description,
+		ActiveSteps: NewStepsJD(),
 	}
 }
 
@@ -30,4 +32,8 @@ func (t TrailOJ) Data() oree.Trail {
 
 func (t TrailOJ) Update(trail oree.Trail) {
 	t.Description = trail.Description
+}
+
+func (t TrailOJ) ActiveSteps() oree.StepsI {
+	return StepsFromData(t.TrailJD.ActiveSteps, t.oreeJson)
 }

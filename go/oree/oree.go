@@ -6,8 +6,6 @@ type Trail struct {
 }
 
 type StepId string
-type StepStatus int
-
 type Step struct {
 	Description string
 }
@@ -24,6 +22,7 @@ type TrailI interface {
 	Id() TrailId
 	Data() Trail
 	Update(Trail)
+	ActiveSteps() StepsI
 }
 
 type StepsI interface {

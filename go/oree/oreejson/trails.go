@@ -8,24 +8,24 @@ type TrailsJD struct {
 	*OrderedListJD[oree.TrailId, TrailJD]
 }
 
+type TrailsOJ struct {
+	OrderedListOJ[oree.TrailId, TrailJD, oree.Trail, oree.TrailI]
+	oreeJson OreeJson
+}
+
 func NewTrailsJD() *TrailsJD {
 	return &TrailsJD{
 		OrderedListJD: NewOrderedListJD[oree.TrailId, TrailJD](),
 	}
 }
 
-type TrailsOJ struct {
-	OrderedListOJ[oree.TrailId, TrailJD, oree.Trail, oree.TrailI]
-	oreeJson OreeJson
-}
-
-func TrailsFromData(data *TrailsJD, oreeJson OreeJson) TrailsOJ {
+func TrailsFromData(data *TrailsJD, oj OreeJson) TrailsOJ {
 	return TrailsOJ{
 		OrderedListOJ: OrderedListFromData(
 			data.OrderedListJD,
-			newItemTrailIConverter(oreeJson),
+			newItemTrailIConverter(oj),
 		),
-		oreeJson: oreeJson,
+		oreeJson: oj,
 	}
 }
 
@@ -33,8 +33,8 @@ type ItemTrailIConverter struct {
 	oreeJson OreeJson
 }
 
-func newItemTrailIConverter(oreeJson OreeJson) ItemTrailIConverter {
-	return ItemTrailIConverter{oreeJson: oreeJson}
+func newItemTrailIConverter(oj OreeJson) ItemTrailIConverter {
+	return ItemTrailIConverter{oreeJson: oj}
 }
 
 func (c ItemTrailIConverter) emptyHandle() oree.TrailI {

@@ -20,6 +20,7 @@ var jsonDataFileName string
 func init() {
 	rootCmd.PersistentFlags().StringVar(&jsonDataFileName, "json-data-file", "./oree.json", "path to JSON data file")
 	rootCmd.AddCommand(trailsCmd)
+	rootCmd.AddCommand(stepsCmd)
 }
 
 func Execute() {
