@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"github.com/henryhlc/playground/go/oree"
-	"github.com/henryhlc/playground/go/oree/cli/cmd/trails"
-	"github.com/henryhlc/playground/go/oree/cli/common"
+	"github.com/henryhlc/playground/go/oree/cli/oree/cmd/trails"
+	"github.com/henryhlc/playground/go/oree/cli/oree/common"
 	"github.com/spf13/cobra"
 )
 

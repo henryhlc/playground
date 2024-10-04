@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/henryhlc/playground/go/oree/cli/cmd"
+	"github.com/henryhlc/playground/go/oree/cli/oree/cmd"
 )
 
 func main() {
