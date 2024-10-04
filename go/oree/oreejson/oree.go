@@ -1,7 +1,7 @@
 package oreejson
 
 import (
-	"strconv"
+	"strings"
 
 	"github.com/henryhlc/playground/go/oree"
 )
@@ -28,10 +28,21 @@ func FromData(d *OreeJD) OreeJson {
 	}
 }
 
+const digitMapping = "abcdefghijklmnopqrstuvwxyz012345789"
+
 func (o OreeJson) getAndIncId() string {
 	id := o.NextId
 	o.NextId++
-	return strconv.Itoa(id)
+	var b strings.Builder
+	if id == 0 {
+		b.WriteByte(digitMapping[0])
+		return b.String()
+	}
+	for id > 0 {
+		b.WriteByte(digitMapping[id%36])
+		id /= 36
+	}
+	return b.String()
 }
 
 func (o OreeJson) Trails() oree.TrailsI {
