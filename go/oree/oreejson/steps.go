@@ -17,7 +17,14 @@ func NewStepsJD() *StepsJD {
 	}
 }
 
+func (s *StepsJD) EnsureInitialized() {
+	if s.OrderedListJD == nil {
+		s.OrderedListJD = NewOrderedListJD[oree.StepId, StepJD]()
+	}
+}
+
 func StepsFromData(data *StepsJD, oj OreeJson) StepsOJ {
+	data.EnsureInitialized()
 	return StepsOJ{
 		OrderedListOJ: OrderedListFromData(
 			data.OrderedListJD,

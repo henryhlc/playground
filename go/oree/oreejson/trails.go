@@ -19,7 +19,14 @@ func NewTrailsJD() *TrailsJD {
 	}
 }
 
+func (t *TrailsJD) EnsureInitialized() {
+	if t.OrderedListJD == nil {
+		t.OrderedListJD = NewOrderedListJD[oree.TrailId, TrailJD]()
+	}
+}
+
 func TrailsFromData(data *TrailsJD, oj OreeJson) TrailsOJ {
+	data.EnsureInitialized()
 	return TrailsOJ{
 		OrderedListOJ: OrderedListFromData(
 			data.OrderedListJD,
@@ -60,11 +67,7 @@ func (c ItemTrailIConverter) updatedItem(
 
 func (c ItemTrailIConverter) itemToHandle(
 	item ListItem[oree.TrailId, TrailJD]) oree.TrailI {
-	return TrailOJ{
-		TrailJD:  item.Elem,
-		oreeJson: c.oreeJson,
-		id:       item.Id,
-	}
+	return TrailFromData(item.Elem, c.oreeJson, item.Id)
 }
 
 func (c ItemTrailIConverter) handleToItem(h oree.TrailI) ListItem[oree.TrailId, TrailJD] {

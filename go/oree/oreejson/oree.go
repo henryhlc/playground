@@ -22,7 +22,14 @@ func NewOreeJD() *OreeJD {
 	}
 }
 
+func (oj *OreeJD) EnsureInitialized() {
+	if oj.TrailsData == nil {
+		oj.TrailsData = NewTrailsJD()
+	}
+}
+
 func FromData(d *OreeJD) OreeJson {
+	d.EnsureInitialized()
 	return OreeJson{
 		OreeJD: d,
 	}
