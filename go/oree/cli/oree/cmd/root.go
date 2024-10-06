@@ -38,8 +38,13 @@ func dash(o oree.OreeI) {
 	for _, trail := range trails {
 		lines = common.ConcatLines(
 			lines,
-			common.FormatTrailWithSteps(trail, []oree.StepStatus{oree.Pinned, oree.Active}, defaultDashStepsN),
+			common.FormatTrail(trail),
+			common.FormatPrefix("  ", common.FormatSteps(trail.StepsWithStatus(oree.Active).FirstN(defaultDashStepsN))),
 		)
 	}
+	lines = common.ConcatLines(
+		lines,
+		[]string{""},
+		common.FormatNofM(len(trails), o.Trails().Len(), "trails"))
 	common.PrintLines(lines)
 }
