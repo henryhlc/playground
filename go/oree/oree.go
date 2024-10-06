@@ -6,6 +6,16 @@ type Trail struct {
 }
 
 type StepId string
+
+type StepStatus int
+
+const (
+	Active StepStatus = iota
+	Pinned
+	Archived
+	NotFound
+)
+
 type Step struct {
 	Description string
 }
@@ -22,7 +32,8 @@ type TrailI interface {
 	Id() TrailId
 	Data() Trail
 	Update(Trail)
-	ActiveSteps() StepsI
+	StepWithId(StepId) (StepI, StepStatus)
+	StepsWithStatus(StepStatus) StepsI
 }
 
 type StepsI interface {
@@ -33,6 +44,8 @@ type StepI interface {
 	Id() StepId
 	Data() Step
 	Update(Step)
+	UpdateStatus(StepStatus)
+	Status() StepStatus
 }
 
 type OrderedListI[D any, H any, I comparable] interface {

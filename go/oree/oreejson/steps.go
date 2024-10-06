@@ -23,12 +23,12 @@ func (s *StepsJD) EnsureInitialized() {
 	}
 }
 
-func StepsFromData(data *StepsJD, oj OreeJson) StepsOJ {
+func StepsFromData(data *StepsJD, oj OreeJson, t TrailOJ, status oree.StepStatus) StepsOJ {
 	data.EnsureInitialized()
 	return StepsOJ{
 		OrderedListOJ: OrderedListFromData(
 			data.OrderedListJD,
-			newItemStepIConverter(oj),
+			newItemStepIConverter(oj, t, status),
 		),
 		oreeJson: oj,
 	}
@@ -36,10 +36,12 @@ func StepsFromData(data *StepsJD, oj OreeJson) StepsOJ {
 
 type ItemStepIConverter struct {
 	oreeJson OreeJson
+	status   oree.StepStatus
+	trail    TrailOJ
 }
 
-func newItemStepIConverter(oj OreeJson) ItemStepIConverter {
-	return ItemStepIConverter{oreeJson: oj}
+func newItemStepIConverter(oj OreeJson, t TrailOJ, s oree.StepStatus) ItemStepIConverter {
+	return ItemStepIConverter{oreeJson: oj, trail: t, status: s}
 }
 
 func (c ItemStepIConverter) emptyHandle() oree.StepI {
@@ -65,11 +67,7 @@ func (c ItemStepIConverter) updatedItem(
 
 func (c ItemStepIConverter) itemToHandle(
 	item ListItem[oree.StepId, StepJD]) oree.StepI {
-	return StepOJ{
-		StepJD:   item.Elem,
-		oreeJson: c.oreeJson,
-		id:       item.Id,
-	}
+	return StepFromData(item.Elem, c.oreeJson, c.trail, item.Id, c.status)
 }
 
 func (c ItemStepIConverter) handleToItem(h oree.StepI) ListItem[oree.StepId, StepJD] {
