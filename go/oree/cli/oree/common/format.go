@@ -52,6 +52,15 @@ func FormatStepsSection(status oree.StepStatus, total int, ss []oree.StepI) []st
 	return FormatPrefix("  ", lines)
 }
 
+func FormatTrailWithSteps(trail oree.TrailI, statuses []oree.StepStatus, n int) []string {
+	lines := FormatTrail(trail)
+	for _, status := range statuses {
+		steps := trail.StepsWithStatus(status)
+		lines = ConcatLines(lines, FormatStepsSection(status, steps.Len(), steps.FirstN(n)))
+	}
+	return lines
+}
+
 func FormatNofM(n, m int, suffix string) []string {
 	return []string{fmt.Sprintf("%v of %v %v", n, m, suffix)}
 }
@@ -68,6 +77,14 @@ func FormatPrefix(prefix string, lines []string) []string {
 		linesWithPrefix[i] = prefix + line
 	}
 	return linesWithPrefix
+}
+
+func ConcatLines(lineLists ...[]string) []string {
+	concatLines := []string{}
+	for _, lines := range lineLists {
+		concatLines = append(concatLines, lines...)
+	}
+	return concatLines
 }
 
 func PrintLines(lineLists ...[]string) {
