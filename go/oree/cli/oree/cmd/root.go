@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/henryhlc/playground/go/oree"
+	"github.com/henryhlc/playground/go/oree/cli/oree/cmd/steps"
 	"github.com/henryhlc/playground/go/oree/cli/oree/cmd/trails"
 	"github.com/henryhlc/playground/go/oree/cli/oree/common"
 	"github.com/spf13/cobra"
@@ -21,6 +22,7 @@ func NewCmd() *cobra.Command {
 		common.RunWithOree(*jsonDataFilePath, f)
 	}
 	cmd.AddCommand(trails.NewCmd(runWithOree))
+	cmd.AddCommand(steps.NewCmd(runWithOree))
 
 	return cmd
 }

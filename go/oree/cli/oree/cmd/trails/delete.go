@@ -1,8 +1,6 @@
 package trails
 
 import (
-	"fmt"
-
 	"github.com/henryhlc/playground/go/oree"
 	"github.com/henryhlc/playground/go/oree/cli/oree/common"
 	"github.com/spf13/cobra"
@@ -26,7 +24,9 @@ func NewDeleteCmd(runWithOree func(func(oree.OreeI))) *cobra.Command {
 func delete(o oree.OreeI, trailId oree.TrailId) {
 	trailI, ok := o.Trails().WithId(trailId)
 	if !ok {
-		fmt.Printf("No trail found for the given trail id \"%v\".\n", trailId)
+		common.PrintLines(
+			common.FormatIdNotFound("trail", trailId),
+		)
 		return
 	}
 	o.Trails().Delete(trailI)

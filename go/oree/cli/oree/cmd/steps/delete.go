@@ -1,4 +1,4 @@
-package trails
+package steps
 
 import (
 	"github.com/henryhlc/playground/go/oree"
@@ -6,23 +6,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewMoveBeforeCmd(runWithOree func(func(oree.OreeI))) *cobra.Command {
+func NewDeleteCmd(runWithOree func(func(oree.OreeI))) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "move-before TrailId NeighborTrailId",
+		Use:  "delete TrailId StepId",
 		Args: cobra.RangeArgs(2, 2),
 		Run: func(cmd *cobra.Command, args []string) {
 			trailId, _ := common.StringArg(args, 0)
-			nbrTrailId, _ := common.StringArg(args, 1)
-
+			stepId, _ := common.StringArg(args, 1)
 			runWithOree(func(o oree.OreeI) {
-				moveBefore(o, oree.TrailId(trailId), oree.TrailId(nbrTrailId))
+				delete(o, oree.TrailId(trailId), oree.StepId(stepId))
 			})
 		},
 	}
 	return cmd
 }
 
-func moveBefore(o oree.OreeI, trailId oree.TrailId, nbrTrailId oree.TrailId) {
+func delete(o oree.OreeI, trailId oree.TrailId, stepId oree.StepId) {
 	trailI, ok := o.Trails().WithId(trailId)
 	if !ok {
 		common.PrintLines(
@@ -30,13 +29,14 @@ func moveBefore(o oree.OreeI, trailId oree.TrailId, nbrTrailId oree.TrailId) {
 		)
 		return
 	}
-	nbrTrailI, ok := o.Trails().WithId(nbrTrailId)
-	if !ok {
+	stepI, status := trailI.StepWithId(stepId)
+	if status == oree.NotFound {
 		common.PrintLines(
-			common.FormatIdNotFound("trail", nbrTrailId),
+			common.FormatIdNotFound("step", stepId),
 		)
 		return
+
 	}
-	o.Trails().PlaceBefore(trailI, nbrTrailI)
-	list(o)
+	trailI.StepsWithStatus(status).Delete(stepI)
+	list(o, trailId)
 }

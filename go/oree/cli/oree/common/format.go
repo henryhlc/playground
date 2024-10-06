@@ -20,8 +20,54 @@ func FormatTrails(ts []oree.TrailI) []string {
 	return lines
 }
 
+func FormatStep(s oree.StepI) []string {
+	return []string{
+		fmt.Sprintf("[%v] %v", s.Id(), s.Data().Description),
+	}
+}
+
+func FormatSteps(ss []oree.StepI) []string {
+	lines := []string{}
+	for _, s := range ss {
+		lines = append(lines, FormatStep(s)...)
+	}
+	return lines
+}
+
+func FormatStepsSection(status oree.StepStatus, total int, ss []oree.StepI) []string {
+	var title string
+	switch status {
+	case oree.Active:
+		title = "Active steps"
+	case oree.Archived:
+		title = "Archived steps"
+	case oree.Pinned:
+		title = "Pinned steps"
+	}
+
+	lines := []string{
+		fmt.Sprintf("%v (%v of %v steps)", title, len(ss), total),
+	}
+	lines = append(lines, FormatPrefix("  ", FormatSteps(ss))...)
+	return FormatPrefix("  ", lines)
+}
+
 func FormatNofM(n, m int, suffix string) []string {
 	return []string{fmt.Sprintf("%v of %v %v", n, m, suffix)}
+}
+
+func FormatIdNotFound(itemType string, id interface{}) []string {
+	return []string{
+		fmt.Sprintf("No %v found for the given id \"%v\".", itemType, id),
+	}
+}
+
+func FormatPrefix(prefix string, lines []string) []string {
+	linesWithPrefix := make([]string, len(lines))
+	for i, line := range lines {
+		linesWithPrefix[i] = prefix + line
+	}
+	return linesWithPrefix
 }
 
 func PrintLines(lineLists ...[]string) {
