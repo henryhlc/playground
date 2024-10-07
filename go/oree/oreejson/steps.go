@@ -3,31 +3,31 @@ package oreejson
 import "github.com/henryhlc/playground/go/oree"
 
 type StepsJD struct {
-	*OrderedListJD[oree.StepId, StepJD]
+	*ListJD[oree.StepId, StepJD]
 }
 
 type StepsOJ struct {
-	OrderedListOJ[oree.StepId, StepJD, oree.Step, oree.StepI]
+	ListOJ[oree.StepId, StepJD, oree.Step, oree.StepI]
 	oreeJson OreeJson
 }
 
 func NewStepsJD() *StepsJD {
 	return &StepsJD{
-		OrderedListJD: NewOrderedListJD[oree.StepId, StepJD](),
+		ListJD: NewListJD[oree.StepId, StepJD](),
 	}
 }
 
 func (s *StepsJD) EnsureInitialized() {
-	if s.OrderedListJD == nil {
-		s.OrderedListJD = NewOrderedListJD[oree.StepId, StepJD]()
+	if s.ListJD == nil {
+		s.ListJD = NewListJD[oree.StepId, StepJD]()
 	}
 }
 
 func StepsFromData(data *StepsJD, oj OreeJson, t TrailOJ, status oree.StepStatus) StepsOJ {
 	data.EnsureInitialized()
 	return StepsOJ{
-		OrderedListOJ: OrderedListFromData(
-			data.OrderedListJD,
+		ListOJ: ListFromData(
+			data.ListJD,
 			newItemStepIConverter(oj, t, status),
 		),
 		oreeJson: oj,

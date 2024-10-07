@@ -5,31 +5,31 @@ import (
 )
 
 type TrailsJD struct {
-	*OrderedListJD[oree.TrailId, TrailJD]
+	*ListJD[oree.TrailId, TrailJD]
 }
 
 type TrailsOJ struct {
-	OrderedListOJ[oree.TrailId, TrailJD, oree.Trail, oree.TrailI]
+	ListOJ[oree.TrailId, TrailJD, oree.Trail, oree.TrailI]
 	oreeJson OreeJson
 }
 
 func NewTrailsJD() *TrailsJD {
 	return &TrailsJD{
-		OrderedListJD: NewOrderedListJD[oree.TrailId, TrailJD](),
+		ListJD: NewListJD[oree.TrailId, TrailJD](),
 	}
 }
 
 func (t *TrailsJD) EnsureInitialized() {
-	if t.OrderedListJD == nil {
-		t.OrderedListJD = NewOrderedListJD[oree.TrailId, TrailJD]()
+	if t.ListJD == nil {
+		t.ListJD = NewListJD[oree.TrailId, TrailJD]()
 	}
 }
 
 func TrailsFromData(data *TrailsJD, oj OreeJson) TrailsOJ {
 	data.EnsureInitialized()
 	return TrailsOJ{
-		OrderedListOJ: OrderedListFromData(
-			data.OrderedListJD,
+		ListOJ: ListFromData(
+			data.ListJD,
 			newItemTrailIConverter(oj),
 		),
 		oreeJson: oj,

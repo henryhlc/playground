@@ -25,7 +25,7 @@ type OreeI interface {
 }
 
 type TrailsI interface {
-	OrderedListI[Trail, TrailI, TrailId]
+	ListI[Trail, TrailI, TrailId]
 }
 
 type TrailI interface {
@@ -37,7 +37,7 @@ type TrailI interface {
 }
 
 type StepsI interface {
-	OrderedListI[Step, StepI, StepId]
+	ListI[Step, StepI, StepId]
 }
 
 type StepI interface {
@@ -48,7 +48,7 @@ type StepI interface {
 	Status() StepStatus
 }
 
-type OrderedListI[D any, H any, I comparable] interface {
+type ListI[D any, H any, I comparable] interface {
 	Len() int
 
 	CreateFront(D) H
