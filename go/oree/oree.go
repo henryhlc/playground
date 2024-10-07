@@ -48,6 +48,19 @@ type StepI interface {
 	Status() StepStatus
 }
 
+type SortedListI[D any, H any, I comparable] interface {
+	Len() int
+	Create(D) H
+
+	WithId(I) (H, bool)
+	FirstN(int) []H
+	LastN(int) []H
+	NAfter(int, H) []H
+	NBefore(int, H) []H
+
+	Delete(H)
+}
+
 type ListI[D any, H any, I comparable] interface {
 	Len() int
 

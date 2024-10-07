@@ -22,93 +22,93 @@ func ListFromData[I comparable, E any, D any, H any](
 	}
 }
 
-func (ol ListOJ[I, E, D, H]) itemsToHandles(items []ListItem[I, E]) []H {
+func (li ListOJ[I, E, D, H]) itemsToHandles(items []ListItem[I, E]) []H {
 	handles := make([]H, len(items))
 	for i, item := range items {
-		handles[i] = ol.Converter.itemToHandle(item)
+		handles[i] = li.Converter.itemToHandle(item)
 	}
 	return handles
 }
 
-func (ol ListOJ[I, E, D, H]) Len() int {
-	return ol.ListJD.Len()
+func (li ListOJ[I, E, D, H]) Len() int {
+	return li.ListJD.Len()
 }
 
-func (ol ListOJ[I, E, D, H]) CreateFront(d D) H {
-	item := ol.Converter.newItem(d)
-	ol.PlaceItemFront(item)
-	return ol.Converter.itemToHandle(item)
+func (li ListOJ[I, E, D, H]) CreateFront(d D) H {
+	item := li.Converter.newItem(d)
+	li.PlaceItemFront(item)
+	return li.Converter.itemToHandle(item)
 }
 
-func (ol ListOJ[I, E, D, H]) CreateBack(d D) H {
-	item := ol.Converter.newItem(d)
-	ol.PlaceItemBack(item)
-	return ol.Converter.itemToHandle(item)
+func (li ListOJ[I, E, D, H]) CreateBack(d D) H {
+	item := li.Converter.newItem(d)
+	li.PlaceItemBack(item)
+	return li.Converter.itemToHandle(item)
 }
 
-func (ol ListOJ[I, E, D, H]) CreateBefore(d D, nbr H) H {
-	item := ol.Converter.newItem(d)
-	nbrItem := ol.Converter.handleToItem(nbr)
-	ol.PlaceItemBefore(item, nbrItem)
-	return ol.Converter.itemToHandle(item)
+func (li ListOJ[I, E, D, H]) CreateBefore(d D, nbr H) H {
+	item := li.Converter.newItem(d)
+	nbrItem := li.Converter.handleToItem(nbr)
+	li.PlaceItemBefore(item, nbrItem)
+	return li.Converter.itemToHandle(item)
 }
 
-func (ol ListOJ[I, E, D, H]) CreateAfter(d D, nbr H) H {
-	item := ol.Converter.newItem(d)
-	nbrItem := ol.Converter.handleToItem(nbr)
-	ol.PlaceItemAfter(item, nbrItem)
-	return ol.Converter.itemToHandle(item)
+func (li ListOJ[I, E, D, H]) CreateAfter(d D, nbr H) H {
+	item := li.Converter.newItem(d)
+	nbrItem := li.Converter.handleToItem(nbr)
+	li.PlaceItemAfter(item, nbrItem)
+	return li.Converter.itemToHandle(item)
 }
 
-func (ol ListOJ[I, E, D, H]) WithId(id I) (H, bool) {
-	item, ok := ol.ItemWithId(id)
+func (li ListOJ[I, E, D, H]) WithId(id I) (H, bool) {
+	item, ok := li.ItemWithId(id)
 	if !ok {
-		return ol.Converter.emptyHandle(), false
+		return li.Converter.emptyHandle(), false
 	}
-	return ol.Converter.itemToHandle(item), true
+	return li.Converter.itemToHandle(item), true
 }
 
-func (ol ListOJ[I, E, D, H]) FirstN(n int) []H {
-	return ol.itemsToHandles(ol.FirstNItems(n))
+func (li ListOJ[I, E, D, H]) FirstN(n int) []H {
+	return li.itemsToHandles(li.FirstNItems(n))
 }
 
-func (ol ListOJ[I, E, D, H]) LastN(n int) []H {
-	return ol.itemsToHandles(ol.LastNItems(n))
+func (li ListOJ[I, E, D, H]) LastN(n int) []H {
+	return li.itemsToHandles(li.LastNItems(n))
 }
 
-func (ol ListOJ[I, E, D, H]) NAfter(n int, h H) []H {
-	item := ol.Converter.handleToItem(h)
-	return ol.itemsToHandles(ol.NItemsAfter(n, item))
+func (li ListOJ[I, E, D, H]) NAfter(n int, h H) []H {
+	item := li.Converter.handleToItem(h)
+	return li.itemsToHandles(li.NItemsAfter(n, item))
 }
 
-func (ol ListOJ[I, E, D, H]) NBefore(n int, h H) []H {
-	item := ol.Converter.handleToItem(h)
-	return ol.itemsToHandles(ol.NItemsBefore(n, item))
+func (li ListOJ[I, E, D, H]) NBefore(n int, h H) []H {
+	item := li.Converter.handleToItem(h)
+	return li.itemsToHandles(li.NItemsBefore(n, item))
 }
 
-func (ol ListOJ[I, E, D, H]) PlaceFront(h H) {
-	item := ol.Converter.handleToItem(h)
-	ol.PlaceItemFront(item)
+func (li ListOJ[I, E, D, H]) PlaceFront(h H) {
+	item := li.Converter.handleToItem(h)
+	li.PlaceItemFront(item)
 }
 
-func (ol ListOJ[I, E, D, H]) PlaceBack(h H) {
-	item := ol.Converter.handleToItem(h)
-	ol.PlaceItemBack(item)
+func (li ListOJ[I, E, D, H]) PlaceBack(h H) {
+	item := li.Converter.handleToItem(h)
+	li.PlaceItemBack(item)
 }
 
-func (ol ListOJ[I, E, D, H]) PlaceBefore(h H, nbr H) {
-	item := ol.Converter.handleToItem(h)
-	nbrItem := ol.Converter.handleToItem(nbr)
-	ol.PlaceItemBefore(item, nbrItem)
+func (li ListOJ[I, E, D, H]) PlaceBefore(h H, nbr H) {
+	item := li.Converter.handleToItem(h)
+	nbrItem := li.Converter.handleToItem(nbr)
+	li.PlaceItemBefore(item, nbrItem)
 }
 
-func (ol ListOJ[I, E, D, H]) PlaceAfter(h H, nbr H) {
-	item := ol.Converter.handleToItem(h)
-	nbrItem := ol.Converter.handleToItem(nbr)
-	ol.PlaceItemAfter(item, nbrItem)
+func (li ListOJ[I, E, D, H]) PlaceAfter(h H, nbr H) {
+	item := li.Converter.handleToItem(h)
+	nbrItem := li.Converter.handleToItem(nbr)
+	li.PlaceItemAfter(item, nbrItem)
 }
 
-func (ol ListOJ[I, E, D, H]) Delete(h H) {
-	item := ol.Converter.handleToItem(h)
-	ol.DeleteItem(item)
+func (li ListOJ[I, E, D, H]) Delete(h H) {
+	item := li.Converter.handleToItem(h)
+	li.DeleteItem(item)
 }

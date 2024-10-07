@@ -1,17 +1,15 @@
-package oreejson_test
+package oreejson
 
 import (
 	"fmt"
 	"testing"
-
-	"github.com/henryhlc/playground/go/oree/oreejson"
 )
 
-func createTestItems(n int) []oreejson.ListItem[string, string] {
-	items := make([]oreejson.ListItem[string, string], n)
+func createTestItems(n int) []ListItem[string, string] {
+	items := make([]ListItem[string, string], n)
 	for i := range n {
 		elem := fmt.Sprintf("elem %v", i)
-		items[i] = oreejson.ListItem[string, string]{
+		items[i] = ListItem[string, string]{
 			Id:   fmt.Sprintf("id %v", i),
 			Elem: &elem,
 		}
@@ -19,7 +17,7 @@ func createTestItems(n int) []oreejson.ListItem[string, string] {
 	return items
 }
 
-func matchTestItem(actual, expected oreejson.ListItem[string, string], t *testing.T) bool {
+func matchTestItem(actual, expected ListItem[string, string], t *testing.T) bool {
 	isMatch := true
 	if actual.Id != expected.Id {
 		isMatch = false
@@ -32,7 +30,7 @@ func matchTestItem(actual, expected oreejson.ListItem[string, string], t *testin
 	return isMatch
 }
 
-func matchTestItems(actual, expected []oreejson.ListItem[string, string], t *testing.T) bool {
+func matchTestItems(actual, expected []ListItem[string, string], t *testing.T) bool {
 	isMatch := true
 	if len(actual) != len(expected) {
 		isMatch = false
@@ -59,7 +57,7 @@ func matchTestItems(actual, expected []oreejson.ListItem[string, string], t *tes
 
 func TestLen(t *testing.T) {
 	items := createTestItems(2)
-	ol := oreejson.NewListJD[string, string]()
+	ol := NewListJD[string, string]()
 	if actual := ol.Len(); actual != 0 {
 		t.Errorf("Len() expected 0 actual %v", actual)
 	}
@@ -74,7 +72,7 @@ func TestLen(t *testing.T) {
 }
 
 func TestPlaceItemBack(t *testing.T) {
-	ol := oreejson.NewListJD[string, string]()
+	ol := NewListJD[string, string]()
 	items := createTestItems(2)
 	ol.PlaceItemBack(items[0])
 	if !matchTestItems(ol.LastNItems(3), items[:1], t) {
@@ -85,7 +83,7 @@ func TestPlaceItemBack(t *testing.T) {
 		t.Errorf("^ after two place back.")
 	}
 	ol.PlaceItemBack(items[0])
-	expected := []oreejson.ListItem[string, string]{
+	expected := []ListItem[string, string]{
 		items[1], items[0],
 	}
 	if !matchTestItems(ol.LastNItems(3), expected, t) {
@@ -94,7 +92,7 @@ func TestPlaceItemBack(t *testing.T) {
 }
 
 func TestPlaceItemFront(t *testing.T) {
-	ol := oreejson.NewListJD[string, string]()
+	ol := NewListJD[string, string]()
 	items := createTestItems(2)
 	ol.PlaceItemFront(items[1])
 	if !matchTestItems(ol.FirstNItems(3), items[1:], t) {
@@ -105,7 +103,7 @@ func TestPlaceItemFront(t *testing.T) {
 		t.Errorf("^ after two place front.")
 	}
 	ol.PlaceItemFront(items[1])
-	expected := []oreejson.ListItem[string, string]{
+	expected := []ListItem[string, string]{
 		items[1], items[0],
 	}
 	if !matchTestItems(ol.FirstNItems(3), expected, t) {
@@ -114,7 +112,7 @@ func TestPlaceItemFront(t *testing.T) {
 }
 
 func TestPlaceItemBefore(t *testing.T) {
-	ol := oreejson.NewListJD[string, string]()
+	ol := NewListJD[string, string]()
 	items := createTestItems(3)
 	ol.PlaceItemFront(items[2])
 	if !matchTestItems(ol.LastNItems(3), items[2:], t) {
@@ -125,7 +123,7 @@ func TestPlaceItemBefore(t *testing.T) {
 		t.Errorf("^ after place item before one existing item.")
 	}
 	ol.PlaceItemBefore(items[0], items[2])
-	expected := []oreejson.ListItem[string, string]{
+	expected := []ListItem[string, string]{
 		items[1], items[0], items[2],
 	}
 	if !matchTestItems(ol.LastNItems(3), expected, t) {
@@ -134,7 +132,7 @@ func TestPlaceItemBefore(t *testing.T) {
 }
 
 func TestPlaceItemAfter(t *testing.T) {
-	ol := oreejson.NewListJD[string, string]()
+	ol := NewListJD[string, string]()
 	items := createTestItems(3)
 	ol.PlaceItemBack(items[0])
 	if !matchTestItems(ol.FirstNItems(3), items[:1], t) {
@@ -145,7 +143,7 @@ func TestPlaceItemAfter(t *testing.T) {
 		t.Errorf("^ after place item after one existing item.")
 	}
 	ol.PlaceItemAfter(items[2], items[0])
-	expected := []oreejson.ListItem[string, string]{
+	expected := []ListItem[string, string]{
 		items[0], items[2], items[1],
 	}
 	if !matchTestItems(ol.FirstNItems(3), expected, t) {
@@ -154,7 +152,7 @@ func TestPlaceItemAfter(t *testing.T) {
 }
 
 func TestItemWithId(t *testing.T) {
-	ol := oreejson.NewListJD[string, string]()
+	ol := NewListJD[string, string]()
 	items := createTestItems(2)
 	ol.PlaceItemBack(items[0])
 	item, ok := ol.ItemWithId(items[0].Id)
@@ -170,7 +168,7 @@ func TestItemWithId(t *testing.T) {
 }
 
 func TestNItems(t *testing.T) {
-	ol := oreejson.NewListJD[string, string]()
+	ol := NewListJD[string, string]()
 	items := createTestItems(5)
 	ol.PlaceItemBack(items[0])
 	ol.PlaceItemBack(items[1])
@@ -197,7 +195,7 @@ func TestNItems(t *testing.T) {
 }
 
 func TestDeleteItem(t *testing.T) {
-	ol := oreejson.NewListJD[string, string]()
+	ol := NewListJD[string, string]()
 	items := createTestItems(3)
 
 	ol.DeleteItem(items[0]) // should be no-op
