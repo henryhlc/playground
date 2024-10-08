@@ -82,3 +82,20 @@ type ListI[D any, H any, I comparable] interface {
 
 	Delete(H)
 }
+
+type RefListI[H any, I comparable] interface {
+	Len() int
+
+	WithId(I) (H, bool)
+	FirstN(int) []H
+	LastN(int) []H
+	NAfter(int, H) []H
+	NBefore(int, H) []H
+
+	PlaceFront(H)
+	PlaceBack(H)
+	PlaceBefore(H, H)
+	PlaceAfter(H, H)
+
+	Delete(H)
+}
