@@ -1,5 +1,10 @@
 package oree
 
+type AreaId string
+type Area struct {
+	Description string
+}
+
 type TrailId string
 type Trail struct {
 	Description string
@@ -22,6 +27,18 @@ type Step struct {
 
 type OreeI interface {
 	Trails() TrailsI
+	Areas() AreasI
+}
+
+type AreaI interface {
+	Id() AreaId
+	Data() Area
+	Update(Area)
+	Trails() RefListI[TrailI, TrailId]
+}
+
+type AreasI interface {
+	ListI[Area, AreaI, AreaId]
 }
 
 type TrailsI interface {

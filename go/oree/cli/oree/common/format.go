@@ -61,6 +61,25 @@ func FormatTrailWithSteps(trail oree.TrailI, statuses []oree.StepStatus, n int) 
 	return lines
 }
 
+func FormatArea(area oree.AreaI) []string {
+	return []string{fmt.Sprintf("[%v] %v", area.Id(), area.Data().Description)}
+}
+
+func FormatAreas(areas []oree.AreaI) []string {
+	lines := []string{}
+	for _, area := range areas {
+		lines = ConcatLines(lines, FormatArea(area))
+	}
+	return lines
+}
+
+func FormatAreaWithTrails(area oree.AreaI, n int) []string {
+	return ConcatLines(
+		FormatArea(area),
+		FormatPrefix("  ", FormatTrails(area.Trails().FirstN(n))),
+	)
+}
+
 func FormatNofM(n, m int, suffix string) []string {
 	return []string{fmt.Sprintf("%v of %v %v", n, m, suffix)}
 }
