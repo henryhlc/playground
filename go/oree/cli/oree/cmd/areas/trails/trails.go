@@ -41,7 +41,7 @@ func listN(o oree.OreeI, areaId oree.AreaId, n int) {
 	}
 	trails := area.Trails().FirstN(n)
 	numTrails := len(trails)
-	total := o.Trails().Len()
+	total := area.Trails().Len()
 	common.PrintLines(
 		common.FormatArea(area),
 		common.FormatPrefix("  ", common.FormatTrails(trails)),

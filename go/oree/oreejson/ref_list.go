@@ -53,10 +53,6 @@ func (ic identityConverter[I]) newItem(d bool) ListItem[I, bool] {
 	}
 }
 
-func (ic identityConverter[I]) updatedItem(item ListItem[I, bool], d bool) ListItem[I, bool] {
-	return item
-}
-
 func (ic identityConverter[I]) itemToHandle(item ListItem[I, bool]) ListItem[I, bool] {
 	return item
 }

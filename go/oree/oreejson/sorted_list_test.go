@@ -22,14 +22,6 @@ func (tc *TestConverter) newItem(d int) ListItem[int, int] {
 	}
 }
 
-func (tc *TestConverter) updatedItem(item ListItem[int, int], d int) ListItem[int, int] {
-	k := d
-	return ListItem[int, int]{
-		Id:   item.Id,
-		Elem: &k,
-	}
-}
-
 func (tc *TestConverter) itemToHandle(item ListItem[int, int]) ListItem[int, int] {
 	return item
 }

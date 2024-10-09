@@ -3,7 +3,6 @@ package oreejson
 type ItemHandleConverter[I comparable, E any, D any, H any] interface {
 	emptyHandle() H
 	newItem(D) ListItem[I, E]
-	updatedItem(ListItem[I, E], D) ListItem[I, E]
 	itemToHandle(ListItem[I, E]) H
 	handleToItem(H) ListItem[I, E]
 }

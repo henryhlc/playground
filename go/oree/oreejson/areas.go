@@ -44,15 +44,6 @@ func (c ItemAreaIConverter) newItem(d oree.Area) ListItem[oree.AreaId, AreaJD] {
 	}
 }
 
-func (c ItemAreaIConverter) updatedItem(
-	item ListItem[oree.AreaId, AreaJD],
-	d oree.Area) ListItem[oree.AreaId, AreaJD] {
-	return ListItem[oree.AreaId, AreaJD]{
-		Id:   item.Id,
-		Elem: NewAreaJD(d),
-	}
-}
-
 func (c ItemAreaIConverter) itemToHandle(
 	item ListItem[oree.AreaId, AreaJD]) oree.AreaI {
 	return AreaFromData(item.Elem, c.oreeJson, item.Id)

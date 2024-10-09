@@ -56,15 +56,6 @@ func (c ItemTrailIConverter) newItem(d oree.Trail) ListItem[oree.TrailId, TrailJ
 	}
 }
 
-func (c ItemTrailIConverter) updatedItem(
-	item ListItem[oree.TrailId, TrailJD],
-	d oree.Trail) ListItem[oree.TrailId, TrailJD] {
-	return ListItem[oree.TrailId, TrailJD]{
-		Id:   item.Id,
-		Elem: NewTrailJD(d),
-	}
-}
-
 func (c ItemTrailIConverter) itemToHandle(
 	item ListItem[oree.TrailId, TrailJD]) oree.TrailI {
 	return TrailFromData(item.Elem, c.oreeJson, item.Id)

@@ -56,15 +56,6 @@ func (c ItemStepIConverter) newItem(d oree.Step) ListItem[oree.StepId, StepJD] {
 	}
 }
 
-func (c ItemStepIConverter) updatedItem(
-	item ListItem[oree.StepId, StepJD],
-	d oree.Step) ListItem[oree.StepId, StepJD] {
-	return ListItem[oree.StepId, StepJD]{
-		Id:   item.Id,
-		Elem: NewStepJD(d),
-	}
-}
-
 func (c ItemStepIConverter) itemToHandle(
 	item ListItem[oree.StepId, StepJD]) oree.StepI {
 	return StepFromData(item.Elem, c.oreeJson, c.trail, item.Id, c.status)
