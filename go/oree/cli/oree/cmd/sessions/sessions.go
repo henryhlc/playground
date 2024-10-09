@@ -23,6 +23,8 @@ func NewCmd(runWithOree func(func(oree.OreeI))) *cobra.Command {
 	cmd.AddCommand(NewDeleteCmd(runWithOree))
 	cmd.AddCommand(NewListBeforeCmd(runWithOree))
 	cmd.AddCommand(NewUpdateCmd(runWithOree))
+	cmd.AddCommand(NewOpenCmd(runWithOree))
+	cmd.AddCommand(NewCloseCmd(runWithOree))
 	return cmd
 }
 
@@ -32,9 +34,19 @@ func list(o oree.OreeI) {
 
 func listN(o oree.OreeI, n int) {
 	sessions := o.Sessions().LastN(n)
-	common.PrintLines(
+	lines := []string{}
+	openSession, ok := o.OpenSessionManager().Data()
+	if ok {
+		lines = common.ConcatLines(lines,
+			common.FormatOpenSession(openSession),
+			[]string{""},
+		)
+	}
+	common.PrintLines(common.ConcatLines(
+		lines,
+		[]string{"Recorded sessions"},
 		common.FormatSessions(sessions),
 		[]string{""},
 		common.FormatNofM(len(sessions), o.Sessions().Len(), "sessions"),
-	)
+	))
 }

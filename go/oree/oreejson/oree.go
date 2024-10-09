@@ -7,10 +7,11 @@ import (
 )
 
 type OreeJD struct {
-	NextId       int         `json:"nextId"`
-	TrailsData   *TrailsJD   `json:"trails"`
-	AreasData    *AreasJD    `json:"areas"`
-	SessionsData *SessionsJD `json:"sessions"`
+	NextId                 int                   `json:"nextId"`
+	TrailsData             *TrailsJD             `json:"trails"`
+	AreasData              *AreasJD              `json:"areas"`
+	SessionsData           *SessionsJD           `json:"sessions"`
+	OpenSessionManagerData *OpenSessionManagerJD `json:"openSession"`
 }
 
 type OreeJson struct {
@@ -35,6 +36,9 @@ func (oj *OreeJD) EnsureInitialized() {
 	}
 	if oj.SessionsData == nil {
 		oj.SessionsData = NewSessionsJD()
+	}
+	if oj.OpenSessionManagerData == nil {
+		oj.OpenSessionManagerData = NewOpenSessionManagerJD()
 	}
 }
 
@@ -72,4 +76,8 @@ func (o OreeJson) Areas() oree.AreasI {
 
 func (o OreeJson) Sessions() oree.SessionsI {
 	return SessionsFromData(o.SessionsData, o)
+}
+
+func (o OreeJson) OpenSessionManager() oree.OpenSessionManagerI {
+	return OpenSessionManagerFromData(o.OpenSessionManagerData, o)
 }

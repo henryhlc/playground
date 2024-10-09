@@ -2,12 +2,24 @@ package oree
 
 import "time"
 
+type OpenSession struct {
+	StartTime time.Time
+	Trail     TrailI
+	Step      StepI
+}
+
+type OpenSessionManagerI interface {
+	Data() (OpenSession, bool)
+	Open(OpenSession)
+	Close(time.Time)
+}
+
 type SessionId string
 type Session struct {
 	StartTime time.Time
 	Duration  time.Duration
-	Step      StepI
 	Trail     TrailI
+	Step      StepI
 }
 
 type SessionI interface {
@@ -49,6 +61,7 @@ type OreeI interface {
 	Trails() TrailsI
 	Areas() AreasI
 	Sessions() SessionsI
+	OpenSessionManager() OpenSessionManagerI
 }
 
 type AreaI interface {

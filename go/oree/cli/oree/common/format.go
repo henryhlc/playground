@@ -2,6 +2,7 @@ package common
 
 import (
 	"fmt"
+	"time"
 	"unicode/utf8"
 
 	"github.com/henryhlc/playground/go/oree"
@@ -100,6 +101,23 @@ func FormatSession(session oree.SessionI) []string {
 			TruncateString(data.Trail.Data().Description, trailLength),
 			data.Step.Id(),
 			TruncateString(data.Step.Data().Description, stepLength),
+		),
+	}
+}
+
+func FormatOpenSession(session oree.OpenSession) []string {
+	const trailLength = 20
+	const stepLength = 20
+	const format = "01/02 15:04"
+	return []string{
+		"Open session",
+		fmt.Sprintf("%v (%v from now) [%v] %v [%v] %v",
+			session.StartTime.Format(format),
+			time.Since(session.StartTime).String(),
+			session.Trail.Id(),
+			TruncateString(session.Trail.Data().Description, trailLength),
+			session.Step.Id(),
+			TruncateString(session.Step.Data().Description, stepLength),
 		),
 	}
 }
