@@ -2,6 +2,7 @@ package common
 
 import (
 	"fmt"
+	"unicode/utf8"
 
 	"github.com/henryhlc/playground/go/oree"
 )
@@ -80,6 +81,37 @@ func FormatAreaWithTrails(area oree.AreaI, n int) []string {
 	)
 }
 
+func FormatSession(session oree.SessionI) []string {
+	data, ok := session.Data()
+	if !ok {
+		return []string{
+			fmt.Sprintf("Invalid session %v", session.Id()),
+		}
+	}
+	const trailLength = 20
+	const stepLength = 20
+	const format = "01/02 15:04"
+	return []string{
+		fmt.Sprintf("[%v] %v %v (%v) [%v] %v [%v] %v", session.Id(),
+			data.StartTime.Format(format),
+			data.StartTime.Add(data.Duration).Format(format),
+			data.Duration.String(),
+			data.Trail.Id(),
+			TruncateString(data.Trail.Data().Description, trailLength),
+			data.Step.Id(),
+			TruncateString(data.Step.Data().Description, stepLength),
+		),
+	}
+}
+
+func FormatSessions(sessions []oree.SessionI) []string {
+	lines := []string{}
+	for _, session := range sessions {
+		lines = ConcatLines(lines, FormatSession(session))
+	}
+	return lines
+}
+
 func FormatNofM(n, m int, suffix string) []string {
 	return []string{fmt.Sprintf("%v of %v %v", n, m, suffix)}
 }
@@ -96,6 +128,21 @@ func FormatPrefix(prefix string, lines []string) []string {
 		linesWithPrefix[i] = prefix + line
 	}
 	return linesWithPrefix
+}
+
+func TruncateString(s string, n int) string {
+	bytes := []byte{}
+	count := utf8.RuneCountInString(s)
+	if count <= n {
+		return s
+	}
+	for i, c := range s {
+		if i+1 >= n {
+			break
+		}
+		bytes = utf8.AppendRune(bytes, c)
+	}
+	return string(append(bytes, '~'))
 }
 
 func ConcatLines(lineLists ...[]string) []string {

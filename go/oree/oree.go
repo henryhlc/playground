@@ -1,5 +1,25 @@
 package oree
 
+import "time"
+
+type SessionId string
+type Session struct {
+	StartTime time.Time
+	Duration  time.Duration
+	Step      StepI
+	Trail     TrailI
+}
+
+type SessionI interface {
+	Id() SessionId
+	Data() (Session, bool)
+	Update(Session)
+}
+
+type SessionsI interface {
+	SortedListI[Session, SessionI, SessionId]
+}
+
 type AreaId string
 type Area struct {
 	Description string
@@ -28,6 +48,7 @@ type Step struct {
 type OreeI interface {
 	Trails() TrailsI
 	Areas() AreasI
+	Sessions() SessionsI
 }
 
 type AreaI interface {
