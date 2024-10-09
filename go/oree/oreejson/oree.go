@@ -40,19 +40,19 @@ func FromData(d *OreeJD) OreeJson {
 	}
 }
 
-const digitMapping = "abcdefghijklmnopqrstuvwxyz012345789"
+const digitMapping = "abcdefghijklmnopqrstuvwxyz0123456789"
 
 func (o OreeJson) getAndIncId() string {
 	id := o.NextId
 	o.NextId++
 	var b strings.Builder
-	if id == 0 {
-		b.WriteByte(digitMapping[0])
-		return b.String()
-	}
-	for id > 0 {
+	for {
 		b.WriteByte(digitMapping[id%36])
 		id /= 36
+		if id == 0 {
+			break
+		}
+		id--
 	}
 	return b.String()
 }
