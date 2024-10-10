@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const defaultListLength = 15
+const defaultListLength = 50
 
 func NewCmd(runWithOree func(func(oree.OreeI))) *cobra.Command {
 	cmd := &cobra.Command{

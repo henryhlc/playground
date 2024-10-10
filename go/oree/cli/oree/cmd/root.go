@@ -45,7 +45,9 @@ func NewCmd() *cobra.Command {
 
 func dash(o oree.OreeI) {
 	trails := o.Trails().FirstN(defaultDashTrailsN)
-	lines := []string{}
+	lines := []string{
+		time.Now().Format(time.DateTime),
+	}
 
 	if os, ok := o.OpenSessionManager().Data(); ok {
 		lines = common.ConcatLines(lines,
