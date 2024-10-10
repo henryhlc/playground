@@ -22,10 +22,12 @@ func NewCreateCmd(runWithOree func(func(oree.OreeI))) *cobra.Command {
 			endTime, useArg := common.TimeArg(args, 1)
 			if !useArg {
 				fmt.Printf("Invalid time %v\n", args[1])
+				return
 			}
 			targetDuration, useArg := common.DurationArg(args, 2)
 			if !useArg {
 				fmt.Printf("Invadid duration %v\n", args[2])
+				return
 			}
 			description, _ := common.StringArg(args, 3)
 			contextId, _ := common.StringArg(args, 4)

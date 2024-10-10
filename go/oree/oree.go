@@ -13,6 +13,7 @@ type Block struct {
 
 type BlocksI interface {
 	SortedListI[Block, BlockI, BlockId]
+	LastBlockCovering(time.Time) (BlockI, bool)
 }
 
 type BlockI interface {
