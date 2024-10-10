@@ -33,6 +33,21 @@ func BlocksFromData(d *BlocksJD, oj OreeJson) BlocksOJ {
 }
 
 func (bs BlocksOJ) LastBlockCovering(t time.Time) (oree.BlockI, bool) {
+	candidate, ok := bs.LastBlockStartBefore(t)
+	if !ok {
+		return BlockOJ{}, false
+	}
+	data, ok := candidate.Data()
+	if !ok {
+		return BlockOJ{}, false
+	}
+	if data.StartTime.Add(data.Duration).After(t) {
+		return candidate, true
+	}
+	return BlockOJ{}, false
+}
+
+func (bs BlocksOJ) LastBlockStartBefore(t time.Time) (oree.BlockI, bool) {
 	lastList := bs.LastN(1)
 	for len(lastList) > 0 {
 		last := lastList[0]
@@ -40,7 +55,7 @@ func (bs BlocksOJ) LastBlockCovering(t time.Time) (oree.BlockI, bool) {
 		if !ok {
 			continue
 		}
-		if data.StartTime.Before(t) && data.StartTime.Add(data.Duration).After(t) {
+		if data.StartTime.Before(t) {
 			return last, true
 		}
 		lastList = bs.NBefore(1, last)

@@ -18,6 +18,7 @@ const defaultDashTrailsN = 10
 const defaultDashPinnedStepsN = 3
 const defaultDashActiveStepsN = 5
 const defaultDashAreaTrailsN = 30
+const defaultDashBlocksN = 3
 
 func NewCmd() *cobra.Command {
 	cmd := &cobra.Command{
@@ -53,8 +54,13 @@ func dash(o oree.OreeI) {
 
 	currentBlock, blockExists := o.Blocks().LastBlockCovering(time.Now())
 	if blockExists {
+		titleLines := []string{}
+		if len(lines) > 0 {
+			titleLines = append(titleLines, "")
+		}
+		titleLines = append(titleLines, "Current block")
 		lines = common.ConcatLines(lines,
-			[]string{"Current block"},
+			titleLines,
 			common.FormatBlock(currentBlock),
 		)
 		blockData, ok := currentBlock.Data()
@@ -79,6 +85,31 @@ func dash(o oree.OreeI) {
 			}
 		}
 	} else {
+		var blocks []oree.BlockI
+		blockBefore, ok := o.Blocks().LastBlockStartBefore(time.Now())
+		if !ok {
+			blocks = o.Blocks().LastN(defaultDashBlocksN)
+		} else {
+			blocks = o.Blocks().NAfter(defaultDashBlocksN, blockBefore)
+		}
+		var titleLines []string
+		if len(lines) > 0 {
+			titleLines = append(titleLines, "")
+		}
+		titleLines = append(titleLines, "Upcoming blocks")
+		if len(blocks) > 0 {
+			lines = common.ConcatLines(lines,
+				titleLines,
+				common.FormatBlocks(blocks),
+			)
+		}
+
+		titleLines = []string{}
+		if len(lines) > 0 {
+			titleLines = append(titleLines, "")
+		}
+		titleLines = append(titleLines, "Trails")
+		lines = common.ConcatLines(lines, titleLines)
 		for _, trail := range trails {
 			lines = common.ConcatLines(
 				lines,
@@ -87,10 +118,6 @@ func dash(o oree.OreeI) {
 				common.FormatPrefix("  ", common.FormatSteps(trail.StepsWithStatus(oree.Active).FirstN(defaultDashActiveStepsN))),
 			)
 		}
-		lines = common.ConcatLines(
-			lines,
-			[]string{""},
-			common.FormatNofM(len(trails), o.Trails().Len(), "trails"))
 	}
 
 	common.PrintLines(lines)
