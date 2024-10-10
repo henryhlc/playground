@@ -111,13 +111,13 @@ func FormatOpenSession(session oree.OpenSession) []string {
 	const format = "01/02 15:04"
 	return []string{
 		"Open session",
-		fmt.Sprintf("%v (%v from now) [%v] %v [%v] %v",
+		fmt.Sprintf("%v [%v] %v [%v] %v (%v)",
 			session.StartTime.Format(format),
-			time.Since(session.StartTime).String(),
 			session.Trail.Id(),
 			TruncateString(session.Trail.Data().Description, trailLength),
 			session.Step.Id(),
 			TruncateString(session.Step.Data().Description, stepLength),
+			time.Since(session.StartTime).String(),
 		),
 	}
 }
@@ -126,6 +126,75 @@ func FormatSessions(sessions []oree.SessionI) []string {
 	lines := []string{}
 	for _, session := range sessions {
 		lines = ConcatLines(lines, FormatSession(session))
+	}
+	return lines
+}
+
+func BlockContextString(block oree.BlockI) string {
+	data, ok := block.Data()
+	if !ok {
+		return ""
+	}
+	var contextId, contextDescription string
+	switch v := data.Context.(type) {
+	case oree.AreaI:
+		contextId = string(v.Id())
+		contextDescription = v.Data().Description
+	case oree.TrailI:
+		contextId = string(v.Id())
+		contextDescription = v.Data().Description
+	}
+	const contextLength = 20
+	if contextId != "" {
+		return fmt.Sprintf("[%v] %v", contextId, TruncateString(contextDescription, contextLength))
+	}
+	return ""
+
+}
+
+func FormatBlock(block oree.BlockI) []string {
+	data, ok := block.Data()
+	if !ok {
+		return []string{
+			fmt.Sprintf("Invalid block %v", block.Id()),
+		}
+	}
+	const format = "01/02 15:04"
+	line := fmt.Sprintf("[%v] %v %v (%v) %v",
+		block.Id(),
+		data.StartTime.Format(format),
+		data.StartTime.Add(data.Duration).Format(format),
+		data.Duration.String(),
+		data.Description,
+	)
+	if data.Context != nil {
+		line += BlockContextString(block)
+	}
+
+	return []string{line}
+}
+
+func FormatBlocks(blocks []oree.BlockI) []string {
+	lines := []string{}
+	dateLine := ""
+	for _, block := range blocks {
+		data, ok := block.Data()
+		if ok {
+			blockDate := data.StartTime.Format(time.DateOnly)
+			if blockDate != dateLine {
+				dateLine = blockDate
+				lines = append(lines, dateLine)
+			}
+		}
+		const descriptionLength = 20
+		lines = append(lines, fmt.Sprintf("[%v] %v-%v (%vm) %v %v",
+			block.Id(),
+			data.StartTime.Format("15:04"),
+			data.StartTime.Add(data.Duration).Format("15:04"),
+			data.Duration.Minutes(),
+			TruncateString(data.Description, descriptionLength),
+			BlockContextString(block),
+		))
 	}
 	return lines
 }

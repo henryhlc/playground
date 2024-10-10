@@ -52,6 +52,11 @@ func TimeArg(args []string, idx int) (t time.Time, useArg bool) {
 			t.Hour(), t.Minute(), 0,
 			0, time.Local), true
 	}
+	// Given year, month, day
+	t, err = time.Parse("2006/01/02", args[idx])
+	if err == nil {
+		return t, true
+	}
 	// Given year, month, day, hour and minute.
 	t, err = time.Parse("2006/01/02 15:04", args[idx])
 	if err == nil {

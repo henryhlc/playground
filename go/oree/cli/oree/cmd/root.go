@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/henryhlc/playground/go/oree"
 	"github.com/henryhlc/playground/go/oree/cli/oree/cmd/areas"
+	"github.com/henryhlc/playground/go/oree/cli/oree/cmd/blocks"
 	"github.com/henryhlc/playground/go/oree/cli/oree/cmd/sessions"
 	"github.com/henryhlc/playground/go/oree/cli/oree/cmd/steps"
 	"github.com/henryhlc/playground/go/oree/cli/oree/cmd/trails"
@@ -32,6 +33,7 @@ func NewCmd() *cobra.Command {
 	cmd.AddCommand(steps.NewCmd(runWithOree))
 	cmd.AddCommand(areas.NewCmd(runWithOree))
 	cmd.AddCommand(sessions.NewCmd(runWithOree))
+	cmd.AddCommand(blocks.NewCmd(runWithOree))
 
 	return cmd
 }

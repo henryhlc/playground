@@ -8,6 +8,7 @@ import (
 
 type OreeJD struct {
 	NextId                 int                   `json:"nextId"`
+	BlocksData             *BlocksJD             `json:"blocks"`
 	TrailsData             *TrailsJD             `json:"trails"`
 	AreasData              *AreasJD              `json:"areas"`
 	SessionsData           *SessionsJD           `json:"sessions"`
@@ -21,6 +22,7 @@ type OreeJson struct {
 func NewOreeJD() *OreeJD {
 	return &OreeJD{
 		NextId:       0,
+		BlocksData:   NewBlocksJD(),
 		TrailsData:   NewTrailsJD(),
 		AreasData:    NewAreasJD(),
 		SessionsData: NewSessionsJD(),
@@ -28,6 +30,9 @@ func NewOreeJD() *OreeJD {
 }
 
 func (oj *OreeJD) EnsureInitialized() {
+	if oj.BlocksData == nil {
+		oj.BlocksData = NewBlocksJD()
+	}
 	if oj.TrailsData == nil {
 		oj.TrailsData = NewTrailsJD()
 	}
@@ -64,6 +69,10 @@ func (o OreeJson) getAndIncId() string {
 		id--
 	}
 	return b.String()
+}
+
+func (o OreeJson) Blocks() oree.BlocksI {
+	return BlocksFromData(o.BlocksData, o)
 }
 
 func (o OreeJson) Trails() oree.TrailsI {

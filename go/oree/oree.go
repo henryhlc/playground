@@ -2,6 +2,25 @@ package oree
 
 import "time"
 
+type BlockId string
+type Block struct {
+	Description    string
+	StartTime      time.Time
+	Duration       time.Duration
+	TargetDuration time.Duration
+	Context        interface{} // Area, Trail or nil
+}
+
+type BlocksI interface {
+	SortedListI[Block, BlockI, BlockId]
+}
+
+type BlockI interface {
+	Id() BlockId
+	Data() (Block, bool)
+	Update(Block)
+}
+
 type OpenSession struct {
 	StartTime time.Time
 	Trail     TrailI
@@ -58,6 +77,7 @@ type Step struct {
 }
 
 type OreeI interface {
+	Blocks() BlocksI
 	Trails() TrailsI
 	Areas() AreasI
 	Sessions() SessionsI
