@@ -168,7 +168,7 @@ func FormatBlock(block oree.BlockI) []string {
 		data.Description,
 	)
 	if data.Context != nil {
-		line += BlockContextString(block)
+		line += fmt.Sprintf(" %v", BlockContextString(block))
 	}
 
 	return []string{line}

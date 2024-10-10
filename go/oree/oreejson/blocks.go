@@ -1,6 +1,10 @@
 package oreejson
 
-import "github.com/henryhlc/playground/go/oree"
+import (
+	"time"
+
+	"github.com/henryhlc/playground/go/oree"
+)
 
 type BlocksJD struct {
 	*ListJD[oree.BlockId, BlockJD]
@@ -26,6 +30,22 @@ func BlocksFromData(d *BlocksJD, oj OreeJson) BlocksOJ {
 		),
 		oreeJson: oj,
 	}
+}
+
+func (bs BlocksOJ) LastBlockCovering(t time.Time) (oree.BlockI, bool) {
+	lastList := bs.LastN(1)
+	for len(lastList) > 0 {
+		last := lastList[0]
+		data, ok := last.Data()
+		if !ok {
+			continue
+		}
+		if data.StartTime.Before(t) && data.StartTime.Add(data.Duration).After(t) {
+			return last, true
+		}
+		lastList = bs.NBefore(1, last)
+	}
+	return BlockOJ{}, false
 }
 
 type ItemBlockConverter struct {
