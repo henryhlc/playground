@@ -110,4 +110,9 @@ func (b BlockOJ) Update(block oree.Block) {
 		b.ContextKind = TrailK
 		b.ContextSpec = string(at.Id())
 	}
+	blocks := b.oreeJson.Blocks().(BlocksOJ)
+	blocks.FixOrder(ListItem[oree.BlockId, BlockJD]{
+		Id:   b.id,
+		Elem: b.BlockJD,
+	})
 }
