@@ -60,3 +60,16 @@ func (m Matrix) MultiplyAddJPI(A, B Matrix) {
 		}
 	}
 }
+
+func (m Matrix) MultiplyAddPIJ(A, B Matrix) {
+	if m.n != A.n || m.m != B.m || A.m != B.n {
+		return
+	}
+	for p := range B.n {
+		for i := range A.n {
+			for j := range B.m {
+				m.Set(i, j, m.At(i, j)+A.At(i, p)*B.At(p, j))
+			}
+		}
+	}
+}

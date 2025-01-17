@@ -55,6 +55,7 @@ func randomSquareMatrix(n int) Matrix {
 func BenchmarkMultiplyAdd(b *testing.B) {
 	CIJP := randomSquareMatrix(100)
 	CJPI := randomSquareMatrix(100)
+	CPIJ := randomSquareMatrix(100)
 	A := randomSquareMatrix(100)
 	B := randomSquareMatrix(100)
 	b.Run("IJP", func(b *testing.B) {
@@ -65,6 +66,11 @@ func BenchmarkMultiplyAdd(b *testing.B) {
 	b.Run("JPI", func(b *testing.B) {
 		for range b.N {
 			CJPI.MultiplyAddJPI(A, B)
+		}
+	})
+	b.Run("PIJ", func(b *testing.B) {
+		for range b.N {
+			CPIJ.MultiplyAddPIJ(A, B)
 		}
 	})
 }
